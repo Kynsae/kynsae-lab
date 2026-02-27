@@ -1,16 +1,18 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { ExperimentManager } from '../../../core/services/experiment-manager';
 import { Experiment } from '../../models/experiment.model';
 import { CustomTextInput } from '../../components/custom-text-input/custom-text-input';
 import { ButtonDropdown } from '../../components/button-dropdown/button-dropdown';
 import { ExperimentPreview } from '../../components/experiment-preview/experiment-preview';
+import { Button } from '../../components/button/button';
 
 @Component({
   selector: 'app-panel',
   imports: [
     CustomTextInput,
     ButtonDropdown,
-    ExperimentPreview
+    ExperimentPreview,
+    Button
   ],
   templateUrl: './panel.html',
   styleUrl: './panel.scss',
@@ -20,19 +22,28 @@ export class Panel {
 
   public experiments = signal<Experiment[]>([]);
   private readonly allExperiments: Experiment[] = [];
+  public searching = signal<boolean>(false);
+  public search = signal<string>('');
 
   constructor() {
     this.allExperiments = this.experimentManager.getAll();
     this.experiments.set(this.allExperiments);
   }
 
+  public readonly searchEffect = effect(() => {
+    this.onSearchChange(this.search());
+  });
+
   public onSearchChange(term: string): void {
     const normalized = term.trim().toLowerCase();
 
     if (!normalized) {
       this.experiments.set(this.allExperiments);
+      this.searching.set(false);
       return;
     }
+
+    this.searching.set(true);
 
     this.experiments.set(
       this.allExperiments.filter((experiment) => {
@@ -46,5 +57,11 @@ export class Panel {
         return haystacks.some((value) => value.includes(normalized));
       }),
     );
+  }
+
+  public clearSearch(): void {
+    this.experiments.set(this.allExperiments);
+    this.searching.set(false);
+    this.search.set('');
   }
 }

@@ -3,7 +3,7 @@
         <app-custom-text-input
             icon="icons/search.svg"
             placeholder="Search.."
-            (valueChange)="onSearchChange($event)"
+            [(value)]="search"
         ></app-custom-text-input>
 
         <div class="flex">
@@ -27,6 +27,13 @@
     <div class="section experiments">
         @for(experiment of experiments(); track $index) {
             <app-experiment-preview [experiment]="experiment"></app-experiment-preview>
+        }
+
+        @if(searching() && experiments().length === 0) {
+            <div class="no-results">
+                <p>No results found :(</p>
+                <app-button (click)="clearSearch()">CLEAR SEARCH</app-button>
+            </div>
         }
     </div>
 </div>

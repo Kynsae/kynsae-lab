@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 
 @Component({
   selector: 'app-custom-text-input',
@@ -9,10 +9,10 @@ import { Component, input, output } from '@angular/core';
 export class CustomTextInput {
   public icon = input<string>();
   public placeholder = input<string>();
-  public valueChange = output<string>();
+  public value = model<string>('');
 
   public onInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
-    this.valueChange.emit(target?.value ?? '');
+    this.value.set(target?.value ?? '');
   }
 }

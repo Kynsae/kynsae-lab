@@ -1,4 +1,4 @@
 <div class="container">
     <img [src]="icon()">
-    <input type="text" [placeholder]="placeholder()" (input)="onInput($event)">
+    <input type="text" [placeholder]="placeholder()" [value]="value()" (input)="onInput($event)">
 </div>

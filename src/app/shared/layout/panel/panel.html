@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="section">
+        <app-custom-text-input
+            icon="icons/search.svg"
+            placeholder="Search.."
+            (valueChange)="onSearchChange($event)"
+        ></app-custom-text-input>
+
+        <div class="flex">
+            <app-button-dropdown 
+                text="TAGS" 
+                icon="icons/arrow-down.svg"
+                [multiSelect]="true"
+                [menus]="['DESIGN', 'WEBSITE', 'ART', 'ALL', 'MOBILE', 'AI', 'DEVELOPMENT', 'GAME', 'OTHER', 'RESEARCH']"
+            ></app-button-dropdown>
+
+            <app-button-dropdown 
+                icon="icons/filter.svg"
+                position="right"
+                [menus]="['BY ID', 'RECENT', 'OLDER']"
+            ></app-button-dropdown>
+        </div>
+    </div>
+
+    <div class="h-separator"></div>
+
+    <div class="section experiments">
+        @for(experiment of experiments(); track $index) {
+            <app-experiment-preview [experiment]="experiment"></app-experiment-preview>
+        }
+    </div>
+</div>

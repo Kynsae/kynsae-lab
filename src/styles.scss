@@ -1,1 +1,87 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+---------------------------------------------
+Mobile styles
+---------------------------------------------
+*/
+
+
+/*
+---------------------------------------------
+Fonts
+---------------------------------------------
+*/
+
+@font-face {
+    font-family: 'JetBrains-Regular';
+    src: url('/fonts/jetbrains-regular.woff2') format('woff2');
+}
+
+/*
+---------------------------------------------
+Global styles
+---------------------------------------------
+*/
+
+body {
+    font-family: 'JetBrains-Regular', 'arial';
+    background-color: black;
+    color: white;
+    user-select: none;
+    -webkit-user-drag: none;
+    margin: 0;
+    overflow-x: hidden !important;
+    touch-action: manipulation;
+    overflow: hidden;
+    height: 100vh;
+    font-size: 13px;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    img {
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+}
+
+body,
+html {
+    overscroll-behavior: none;
+}
+
+p {
+    margin: 0;
+}
+
+a {
+    all: unset;
+}
+
+/*
+---------------------------------------------
+CSS Custom Properties
+---------------------------------------------
+*/
+
+// COLORS
+:root {
+    --background100: #0E0E0E;
+    --background200: #191919;
+    --background300: #222222;
+
+    --grey100: #757575;
+}
+
+// OTHER
+:root {
+    --padding-small: 10px;
+    --padding-medium: 20px;
+}
+
+/*
+---------------------------------------------
+CSS Custom classes
+---------------------------------------------
+*/
+

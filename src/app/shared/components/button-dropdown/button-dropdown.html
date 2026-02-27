@@ -1,0 +1,15 @@
+<div class="container">
+    <div [class.button-active]="dropdownOpen()" (click)="toggleDropdown()" class="button">
+        @if(text()) {
+            <p>{{ text() }}</p>
+        }
+    
+        <img class="icon" [class.icon-rotate]="dropdownOpen() && multiSelect()" [src]="icon()">
+    </div>
+
+    <div [class.open]="dropdownOpen()" [class.position-right]="position() === 'right'" class="dropdown-menu">
+        @for(menu of menus(); track $index) {
+            <p (click)="selectMenu(menu)">{{ menu }}</p>
+        }
+    </div>
+</div>

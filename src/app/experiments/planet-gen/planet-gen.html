@@ -1,0 +1,20 @@
+<div [ngStyle]="generateStyleVariables()" class="planet-container">
+    <div class="wrapper">
+        <div class="p-color-2">
+            <canvas #canvas class="shader-canvas"></canvas>
+        </div>
+        
+        <div class="atmosphere-color"></div>
+
+        @if (hasRings) {
+            <div class="rings">
+                <div class="ring-left"></div>
+            </div>
+            <div style="z-index: 1;" class="rings">
+                <div class="ring-right"></div>
+            </div>
+        }
+
+        <div [ngStyle]="planetShadowStyles" class="p-mask"></div>
+    </div>
+</div>

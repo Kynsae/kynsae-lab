@@ -1,0 +1,109 @@
+@mixin absolute-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin centered-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin rounded-blur($blur: 10px) {
+  border-radius: 100%;
+  filter: blur($blur);
+}
+
+@mixin ring-base {
+  position: absolute;
+  left: 50%;
+  width: var(--width);
+  height: var(--height);
+  background: radial-gradient(circle,
+      transparent 39%,
+      var(--rings-color) 40%,
+      var(--rings-color) 40%,
+      transparent 41%,
+      transparent 46%,
+      var(--rings-color) 51%,
+      var(--rings-color) 54%,
+      transparent 55%,
+      var(--rings-color) 58%,
+      transparent 61%,
+      rgba(0, 0, 0, 0.3) 64%,
+      rgba(0, 0, 0, 0.3) 65%,
+      transparent 67%,
+      rgba(0, 0, 0, 0.2) 69%,
+      transparent 71%);
+  background-size: 100% 200%;
+}
+
+// Component styles
+.planet-container {
+  @include centered-flex;
+  width: var(--planet-size);
+  height: var(--planet-size);
+}
+
+.wrapper {
+  position: absolute;
+  width: var(--base-size);
+  height: var(--base-size);
+  transform: scale(var(--scale));
+}
+
+.planet,
+.p-background,
+.atmosphere-color,
+.p-color-2,
+.p-mask {
+  @include rounded-blur(10px);
+  position: absolute;
+  width: var(--base-size);
+  height: var(--base-size);
+  z-index: 1;
+}
+
+.atmosphere-color {
+  background-color: var(--color-primary);
+  mix-blend-mode: hue;
+  z-index: -1;
+}
+
+.p-color-2 {
+  @include rounded-blur(1px);
+  overflow: hidden;
+  background-color: var(--color-secondary);
+}
+
+.rings {
+  @include absolute-center;
+
+  --width: calc((var(--base-size) * 2) + var(--rings-distance));
+  --height: calc((var(--width) / 2));
+
+  transform: perspective(4000px) rotateX(var(--perspectiveY)) rotateY(var(--perspectiveX));
+
+  .ring-left,
+  .ring-right {
+    @include ring-base;
+    top: 50%;
+    transform: translate(-50%, -100%);
+  }
+
+  .ring-right {
+    top: calc(50% + var(--height));
+    transform: translate(-50%, -100.05%) scaleY(-1);
+  }
+}
+
+.shader-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 125%;
+  height: 125%;
+  transform: var(--shader-transform);
+}

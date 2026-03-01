@@ -9,7 +9,11 @@
 
     <div [class.open]="dropdownOpen()" [class.position-right]="position() === 'right'" class="dropdown-menu">
         @for(menu of menus(); track $index) {
-            <p (click)="selectMenu(menu)">{{ menu }}</p>
+            <div [class.selected-menu-item]="menuSelected(menu)" class="menu-item" (click)="selectMenu(menu)">
+                {{ menu }}
+
+                <div class="active-label"></div>
+            </div>
         }
     </div>
 </div>

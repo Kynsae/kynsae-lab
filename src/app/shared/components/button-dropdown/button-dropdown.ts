@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   input,
   output,
   signal,
@@ -9,33 +10,47 @@ import {
 
 @Component({
   selector: 'app-button-dropdown',
-  imports: [],
   templateUrl: './button-dropdown.html',
   styleUrl: './button-dropdown.scss',
 })
 export class ButtonDropdown {
+  // INPUTS
   public text = input<string>();
   public icon = input<string>();
   public menus = input<string[]>();
   public multiSelect = input<boolean>(false);
   public position = input<'left' | 'right'>('left');
 
-  public selectedMenu = output<string>();
+  // OUTPUTS
+  public selected = output<string[]>();
 
+  // SIGNALS
   public dropdownOpen = signal<boolean>(false);
+  private selectedItems = signal<string[]>([]);
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
+  // INJECTIONS
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
 
-  public toggleDropdown() {
+  public toggleDropdown(): void {
     this.dropdownOpen.set(!this.dropdownOpen());
   }
 
-  public selectMenu(menu: string) {
-    this.selectedMenu.emit(menu);
-
-    if (!this.multiSelect()) {
-      this.dropdownOpen.set(false);
+  public selectMenu(menu: string): void {
+    if(this.multiSelect()) {
+      const current = this.selectedItems();
+      const next = current.includes(menu)
+        ? current.filter((m) => m !== menu)
+        : [...current, menu];
+      this.selectedItems.set(next);
+      this.selected.emit(next);
+    } else {
+      this.selectedItems.set([menu]);
+      this.selected.emit([menu]);
     }
+  }
+
+  public menuSelected(menu: string): boolean {
+    return this.selectedItems().includes(menu);
   }
 
   @HostListener('document:click', ['$event'])

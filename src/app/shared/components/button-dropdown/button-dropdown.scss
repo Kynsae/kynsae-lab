@@ -63,18 +63,6 @@
     transform: translateY(-5px);
     pointer-events: none;
     transition: all 0.2s ease-in-out;
-
-    p {
-        width: 90px;
-        padding: calc(var(--padding-small) / 2);
-        box-sizing: border-box;
-        cursor: pointer;
-        border-radius: 3px;
-
-        &:hover {
-            background-color: var(--background300);
-        }
-    }
 }
 
 .open {
@@ -89,4 +77,36 @@
 
 .icon-rotate {
     transform: rotate(-180deg);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: calc(var(--padding-small) / 2);
+    box-sizing: border-box;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+        background-color: var(--background300);
+    }
+}
+
+.active-label {
+    width: 5px;
+    height: 5px;
+    margin-left: 20px;
+    border-radius: 100px;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.selected-menu-item {
+    color: var(--active);
+
+    .active-label {
+        background-color: var(--active);
+    }
 }

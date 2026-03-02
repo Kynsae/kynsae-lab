@@ -14,4 +14,8 @@ export class ExperimentManager {
   public getByTag(tag: string): Experiment[] {
     return EXPERIMENTS.filter(experiment => experiment.tags.includes(tag));
   }
+
+  public getById(id: string): Experiment | undefined {
+    return EXPERIMENTS.find(experiment => experiment.id === id);
+  }
 }

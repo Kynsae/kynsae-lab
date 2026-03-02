@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { WebGL } from './services/webgl';
 import { PlanetStyle } from './services/planet-style';
 
 @Component({
   selector: 'app-planet-gen',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './planet-gen.html',
   styleUrl: './planet-gen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,7 +14,8 @@ import { PlanetStyle } from './services/planet-style';
 })
 export class PlanetGen implements OnDestroy {
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
-  @Input() planetSize: number = 500;
+  planetSize: number = window.innerWidth * 0.35;
+  
   @Input() primaryColor: string = '#1c00ff';
   @Input() secondaryColor: string = '#00E0FF';
   @Input() hasRings: boolean = true;
@@ -84,6 +86,8 @@ export class PlanetGen implements OnDestroy {
   }
 
   private handleResize() {
+    this.planetSize = window.innerWidth * 0.35;
+    this.cdr.markForCheck();
     if (this.canvasRef?.nativeElement) {
       this.webglService.resize(this.canvasRef.nativeElement);
     }
@@ -136,6 +140,11 @@ export class PlanetGen implements OnDestroy {
       this.rafId = requestAnimationFrame(step);
     };
     this.rafId = requestAnimationFrame(step);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.handleResize();
   }
 
   @HostListener('document:mousemove', ['$event'])

@@ -1,8 +1,8 @@
-<div class="container">
-    <img [src]="experiment()?.gifUrl" class="thumbnail">
+<a [routerLink]="['/', experiment()?.id]" class="container">
+    <img [src]="'experiments/' + experiment()?.id + '/preview.webp'" class="thumbnail">
 
     <div class="infos">
         <p>{{ experiment()?.name }}</p>
         <p class="id">#{{ experiment()?.id }}</p>
     </div>
-</div>
+</a>

@@ -1,52 +1,40 @@
+import { MagicBall } from "../../experiments/magic-ball/magic-ball";
+import { NeonSphere } from "../../experiments/neon-sphere/neon-sphere";
+import { PCMap } from "../../experiments/pc-map/pc-map";
+import { PlanetGen } from "../../experiments/planet-gen/planet-gen";
 import { Experiment } from "../../shared/models/experiment.model";
 
 export const EXPERIMENTS: Experiment[] = [
     {
         id: '001',
-        name: 'Experiment 1',
-        description: 'Description 1',
-        gifUrl: 'experiments/001.webp',
-        tags: ['Tag 1', 'Tag 2'],
+        name: 'CSS Planet Generator',
+        description: 'Procedural planet with atmosphere and rings.',
+        tags: ['ART', 'WEBGL'],
         createdAt: new Date(),
+        component: PlanetGen,
     },
     {
         id: '002',
-        name: 'Experiment 2',
-        description: 'Description 2',
-        gifUrl: 'experiments/002.webp',
-        tags: ['Tag 1', 'Tag 2'],
+        name: 'Geneva Point Cloud',
+        description: 'Procedural planet with atmosphere and rings.',
+        tags: ['ART', 'WEBGL'],
         createdAt: new Date(),
+        component: PCMap,
     },
     {
-        id: '001',
-        name: 'Experiment 1',
-        description: 'Description 1',
-        gifUrl: 'experiments/001.webp',
-        tags: ['Tag 1', 'Tag 2'],
+        id: '003',
+        name: 'Point Cloud',
+        description: 'Point cloud visualization.',
+        tags: ['ART', 'WEBGL'],
         createdAt: new Date(),
+        component: MagicBall,
     },
     {
-        id: '002',
-        name: 'Experiment 2',
-        description: 'Description 2',
-        gifUrl: 'experiments/002.webp',
-        tags: ['Tag 1', 'Tag 2'],
+        id: '004',
+        name: 'Slicing',
+        description: '.',
+        tags: ['ART', 'WEBGL'],
         createdAt: new Date(),
-    },
-    {
-        id: '001',
-        name: 'Experiment 1',
-        description: 'Description 1',
-        gifUrl: 'experiments/001.webp',
-        tags: ['Tag 1', 'Tag 2'],
-        createdAt: new Date(),
-    },
-    {
-        id: '002',
-        name: 'Experiment 2',
-        description: 'Description 2',
-        gifUrl: 'experiments/002.webp',
-        tags: ['Tag 1', 'Tag 2'],
-        createdAt: new Date(),
+        component: NeonSphere,
     },
 ];

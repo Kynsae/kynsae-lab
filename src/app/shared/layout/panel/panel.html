@@ -51,12 +51,12 @@
             <div style="display: flex; gap: var(--padding-small);">
                 <app-info-button
                     label="ID"
-                    value="001"
+                    [value]="experimentManager.activeExperiment()?.id"
                 ></app-info-button>
 
                 <app-info-button
                     label="DATE"
-                    value="2024"
+                    [value]="experimentManager.activeExperiment()?.year"
                 ></app-info-button>
             </div>
         </div>

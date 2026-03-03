@@ -5,7 +5,7 @@ export interface Experiment {
     name: string;
     description: string;
     tags: string[];
-    createdAt: Date;
+    year: string;
     component: any;
     settings?: ExperimentSetting[];
 }

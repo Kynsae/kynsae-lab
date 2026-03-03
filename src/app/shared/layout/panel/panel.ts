@@ -95,9 +95,9 @@ export class Panel {
       result = [...result].sort((a, b) => {
         switch (sort) {
           case 'RECENT':
-            return b.createdAt.getTime() - a.createdAt.getTime();
+            return Number(b.year) - Number(a.year);
           case 'OLDER':
-            return a.createdAt.getTime() - b.createdAt.getTime();
+            return Number(a.year) - Number(b.year);
           default:
             return 0;
         }

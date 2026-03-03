@@ -10,7 +10,7 @@ export const EXPERIMENTS: Experiment[] = [
         name: 'CSS Planet Generator',
         description: 'Procedural planet with atmosphere and rings.',
         tags: ['ART', 'WEBGL'],
-        createdAt: new Date(),
+        year: '2024',
         component: PlanetGen,
         settings: [
             { type: 'slider', key: 'nightPercentage', label: 'Night Percentage', min: 0, max: 100, step: 1, defaultValue: 0 },
@@ -31,7 +31,7 @@ export const EXPERIMENTS: Experiment[] = [
         name: 'Geneva Point Cloud',
         description: 'Procedural planet with atmosphere and rings.',
         tags: ['ART', 'WEBGL'],
-        createdAt: new Date(),
+        year: '2024',
         component: PCMap,
         settings: [
             { type: 'switch', key: 'isDayMode', label: 'Day Mode', defaultValue: true },
@@ -51,7 +51,7 @@ export const EXPERIMENTS: Experiment[] = [
         name: 'Point Cloud',
         description: 'Point cloud visualization.',
         tags: ['ART', 'WEBGL'],
-        createdAt: new Date(),
+        year: '2024',
         component: MagicBall,
     },
     {
@@ -59,7 +59,7 @@ export const EXPERIMENTS: Experiment[] = [
         name: 'Slicing',
         description: '.',
         tags: ['ART', 'WEBGL'],
-        createdAt: new Date(),
+        year: '2024',
         component: NeonSphere,
     },
 ];

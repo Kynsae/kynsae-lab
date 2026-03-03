@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angula
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './shared/layout/navbar/navbar';
 import { Panel } from './shared/layout/panel/panel';
+import { Scrollbar } from './shared/components/scrollbar/scrollbar';
 import { ScrollManager } from './core/services/scroll-manager';
 
 @Component({
@@ -9,6 +10,7 @@ import { ScrollManager } from './core/services/scroll-manager';
   imports: [
     Panel,
     Navbar,
+    Scrollbar,
     RouterOutlet
   ],
   templateUrl: './app.html',

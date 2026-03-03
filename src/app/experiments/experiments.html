@@ -1,7 +1,7 @@
 <div class="container">
   @if (experimentComponent(); as component) {
-    <ng-container *ngComponentOutlet="component; inputs: { progress: percentage() }" />
+    <ng-container *ngComponentOutlet="component; inputs: experimentInputs()" />
   } @else {
     <p class="not-found">Experiment not found.</p>
-  }  
+  }
 </div>

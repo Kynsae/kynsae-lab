@@ -88,4 +88,17 @@
 
 .pr-description {
     color: var(--grey100);
+    margin-bottom: var(--padding-small);
+}
+
+.setting-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--padding-small);
+}
+
+.setting-label {
+    color: var(--grey100);
+    font-size: 11px;
+    margin-bottom: var(--padding-small);
 }

@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, inject, Input, OnDestroy, Output, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { WebGL } from './services/webgl';
 import { PlanetStyle } from './services/planet-style';
 
 @Component({
   selector: 'app-planet-gen',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './planet-gen.html',
   styleUrl: './planet-gen.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

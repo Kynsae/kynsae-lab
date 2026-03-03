@@ -1,7 +1,9 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { ExperimentManager } from '../../../core/services/experiment-manager';
+import { ExperimentSettingsService } from '../../../core/services/experiment-settings.service';
 import { TextSearchService } from '../../../core/services/text-search.service';
 import { Experiment } from '../../models/experiment.model';
+import type { ColorSetting, SliderSetting, SwitchSetting } from '../../models/experiment-setting.model';
 import { CustomTextInput } from '../../components/custom-text-input/custom-text-input';
 import { ButtonDropdown } from '../../components/button-dropdown/button-dropdown';
 import { ExperimentPreview } from '../../components/experiment-preview/experiment-preview';
@@ -28,6 +30,7 @@ import { InfoButton } from '../../components/info-button/info-button';
 })
 export class Panel {
   public readonly experimentManager = inject(ExperimentManager);
+  public readonly settingsService = inject(ExperimentSettingsService);
   private readonly textSearch = inject(TextSearchService);
 
   public experiments = signal<Experiment[]>([]);
@@ -37,9 +40,27 @@ export class Panel {
   public selectedTags = signal<string[]>([]);
   public currentSort = signal<string | null>(null);
 
+  public showSettings = signal<boolean>(false);
+
   constructor() {
     this.allExperiments = this.experimentManager.getAll();
     this.experiments.set(this.allExperiments);
+
+    effect(() => {
+      const exp = this.experimentManager.activeExperiment();
+      if (exp) {
+        this.showSettings.set(true);
+      } else {
+        this.showSettings.set(false);
+      }
+    });
+
+    effect(() => {
+      const exp = this.experimentManager.activeExperiment();
+      if (exp?.settings?.length) {
+        this.settingsService.initialize(exp.id, exp.settings);
+      }
+    });
   }
 
   public readonly filterEffect = effect(() => {
@@ -101,5 +122,24 @@ export class Panel {
     this.currentSort.set(null);
     this.experiments.set(this.allExperiments);
     this.searching.set(false);
+  }
+
+  getSliderValue(s: SliderSetting): number {
+    return (this.settingsService.settings()[s.key] ?? s.defaultValue) as number;
+  }
+
+  getSwitchValue(s: SwitchSetting): boolean {
+    return (this.settingsService.settings()[s.key] ?? s.defaultValue) as boolean;
+  }
+
+  getColorValue(s: ColorSetting): string {
+    return (this.settingsService.settings()[s.key] ?? s.defaultValue) as string;
+  }
+
+  onSettingChange(key: string, value: number | boolean | string): void {
+    this.settingsService.setSetting(key, value);
+    if (key === 'isDayMode' && typeof value === 'boolean') {
+      this.settingsService.setSetting('backgroundColor', value ? '#373f49' : '#000000');
+    }
   }
 }

@@ -1,5 +1,5 @@
 <div class="container">
-    <div [class.panel-active]="experimentManager.activeExperiment()?.name" class="panel-left">
+    <div [class.panel-active]="showSettings()" class="panel-left">
         <div class="section">
             <app-custom-text-input
                 icon="icons/search.svg"
@@ -28,8 +28,8 @@
         <div class="h-separator"></div>
     
         <div class="section experiments">
-            @for(experiment of experiments(); track $index) {
-                <app-experiment-preview [experiment]="experiment"></app-experiment-preview>
+            @for (experiment of experiments(); track experiment.id) {
+                <app-experiment-preview (click)="showSettings.set(true)" [experiment]="experiment"></app-experiment-preview>
             }
     
             @if(searching() && experiments().length === 0) {
@@ -41,9 +41,9 @@
         </div>
     </div>
 
-    <div [class.panel-active]="experimentManager.activeExperiment()?.name" class="panel-right">
+    <div [class.panel-active]="showSettings()" class="panel-right">
         <div class="section">
-            <app-button (click)="experimentManager.activeExperiment.set(null)" image="icons/arrow-left.svg"></app-button>
+            <app-button (click)="showSettings.set(false)" image="icons/arrow-left.svg"></app-button>
             
             <p class="pr-name">{{ experimentManager.activeExperiment()?.name }}</p>
             <p class="pr-description">{{ experimentManager.activeExperiment()?.description }}</p>
@@ -64,20 +64,38 @@
         <div class="h-separator"></div>
 
         <div class="section">
-            <app-slider
-                label="Night Percentage"
-                [min]="0"
-                [max]="100"
-                [step]="1"
-            ></app-slider>
-
-            <app-switch
-                label="Show Rings"
-            ></app-switch>
-
-            <app-color-picker
-                label="Planet Color"
-            ></app-color-picker>
+            @for (setting of experimentManager.activeExperiment()?.settings ?? []; track setting.key) {
+                <div class="setting-container">
+                    <p class="setting-label">{{ setting.label }}</p>
+                
+                    @switch (setting.type) {
+                        @case ('slider') {
+                            <app-slider
+                                [label]="setting.label"
+                                [min]="setting.min"
+                                [max]="setting.max"
+                                [step]="setting.step"
+                                [value]="getSliderValue(setting)"
+                                (valueChange)="onSettingChange(setting.key, $event)"
+                            />
+                        }
+                        @case ('switch') {
+                            <app-switch
+                                [label]="setting.label"
+                                [value]="getSwitchValue(setting)"
+                                (valueChange)="onSettingChange(setting.key, $event)"
+                            />
+                        }
+                        @case ('color') {
+                            <app-color-picker
+                                [label]="setting.label"
+                                [value]="getColorValue(setting)"
+                                (valueChange)="onSettingChange(setting.key, $event)"
+                            />
+                        }
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

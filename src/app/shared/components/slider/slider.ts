@@ -8,9 +8,11 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-slider',
+  imports: [DecimalPipe],
   templateUrl: './slider.html',
   styleUrl: './slider.scss'
 })

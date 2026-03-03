@@ -1,3 +1,5 @@
+import type { ExperimentSetting } from './experiment-setting.model';
+
 export interface Experiment {
     id: string;
     name: string;
@@ -5,4 +7,5 @@ export interface Experiment {
     tags: string[];
     createdAt: Date;
     component: any;
+    settings?: ExperimentSetting[];
 }

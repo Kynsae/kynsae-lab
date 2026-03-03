@@ -1,13 +1,12 @@
 import { Component, ElementRef, HostListener, inject, Input, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { CameraController } from './services/camera-controller';
 import { ModelManager } from './services/model-manager';
 
 @Component({
   selector: 'app-pc-map',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: 'pc-map.html',
   styleUrls: ['./pc-map.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -16,16 +15,61 @@ export class PCMap implements OnInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) containerRef!: ElementRef;
 
   percentage = 0;
-  isDayMode = true;
-  clickRadius = 2.5;
-  maxClickDuration = 2;
-  clickStrength = 2.5;
-  moveWindow = 0.3;
-  centerRadius = 0.10;
-  centerFalloff = 0.05;
-  particleSize = 3.0;
-  backgroundColor = '#373f49';
-  backgroundAlpha = 1;
+  private _isDayMode = true;
+  private _clickRadius = 2.5;
+  private _maxClickDuration = 2;
+  private _clickStrength = 2.5;
+  private _moveWindow = 0.3;
+  private _centerRadius = 0.10;
+  private _centerFalloff = 0.05;
+  private _particleSize = 3.0;
+  private _backgroundColor = '#373f49';
+  private _backgroundAlpha = 1;
+
+  get isDayMode() { return this._isDayMode; }
+  get clickRadius() { return this._clickRadius; }
+  get maxClickDuration() { return this._maxClickDuration; }
+  get clickStrength() { return this._clickStrength; }
+  get moveWindow() { return this._moveWindow; }
+  get centerRadius() { return this._centerRadius; }
+  get centerFalloff() { return this._centerFalloff; }
+  get particleSize() { return this._particleSize; }
+  get backgroundColor() { return this._backgroundColor; }
+  get backgroundAlpha() { return this._backgroundAlpha; }
+
+  @Input() set isDayMode(v: boolean) {
+    if (this._isDayMode !== v) {
+      this._isDayMode = v;
+      this.onModeChange();
+    }
+  }
+  @Input() set clickRadius(v: number) {
+    if (this._clickRadius !== v) { this._clickRadius = v; this.onSettingsChange(); }
+  }
+  @Input() set maxClickDuration(v: number) {
+    if (this._maxClickDuration !== v) { this._maxClickDuration = v; this.onSettingsChange(); }
+  }
+  @Input() set clickStrength(v: number) {
+    if (this._clickStrength !== v) { this._clickStrength = v; this.onSettingsChange(); }
+  }
+  @Input() set moveWindow(v: number) {
+    if (this._moveWindow !== v) { this._moveWindow = v; this.onSettingsChange(); }
+  }
+  @Input() set centerRadius(v: number) {
+    if (this._centerRadius !== v) { this._centerRadius = v; this.onSettingsChange(); }
+  }
+  @Input() set centerFalloff(v: number) {
+    if (this._centerFalloff !== v) { this._centerFalloff = v; this.onSettingsChange(); }
+  }
+  @Input() set particleSize(v: number) {
+    if (this._particleSize !== v) { this._particleSize = v; this.onSettingsChange(); }
+  }
+  @Input() set backgroundColor(v: string) {
+    if (this._backgroundColor !== v) { this._backgroundColor = v; this.onBackgroundChange(); }
+  }
+  @Input() set backgroundAlpha(v: number) {
+    if (this._backgroundAlpha !== v) { this._backgroundAlpha = v; this.onBackgroundChange(); }
+  }
 
   @Input() set progress(value: number) {
     if (value >= 0 && value <= 100) {
@@ -56,33 +100,33 @@ export class PCMap implements OnInit, OnDestroy {
 
   protected onSettingsChange(): void {
     this.modelLoader.updateSettings({
-      clickRadius: this.clickRadius,
-      maxClickDuration: this.maxClickDuration,
-      clickStrength: this.clickStrength,
-      moveWindow: this.moveWindow,
-      centerRadius: this.centerRadius,
-      centerFalloff: this.centerFalloff,
-      pointSize: this.particleSize,
+      clickRadius: this._clickRadius,
+      maxClickDuration: this._maxClickDuration,
+      clickStrength: this._clickStrength,
+      moveWindow: this._moveWindow,
+      centerRadius: this._centerRadius,
+      centerFalloff: this._centerFalloff,
+      pointSize: this._particleSize,
     });
   }
 
   protected async onModeChange(): Promise<void> {
-    this.backgroundColor = this.isDayMode ? '#373f49' : '#000000';
+    this._backgroundColor = this._isDayMode ? '#373f49' : '#000000';
     this.onBackgroundChange();
-    const path = this.isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
+    const path = this._isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
     await this.modelLoader.load(this.scene, path, () => {});
     this.applyPercentage();
     this.onSettingsChange();
   }
 
   private async loadModel(): Promise<THREE.Vector3> {
-    const path = this.isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
+    const path = this._isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
     return this.modelLoader.load(this.scene, path, () => {});
   }
 
   protected onBackgroundChange(): void {
-    const color = new THREE.Color(this.backgroundColor);
-    this.renderer.setClearColor(color.getHex(), this.backgroundAlpha);
+    const color = new THREE.Color(this._backgroundColor);
+    this.renderer.setClearColor(color.getHex(), this._backgroundAlpha);
   }
 
   async ngOnInit(): Promise<void> {

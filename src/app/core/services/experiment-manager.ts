@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Experiment } from '../../shared/models/experiment.model';
 import { EXPERIMENTS } from '../data/experiments.data';
 
@@ -6,6 +6,8 @@ import { EXPERIMENTS } from '../data/experiments.data';
   providedIn: 'root',
 })
 export class ExperimentManager {
+
+  public activeExperiment = signal<Experiment | null>(null);
 
   public getAll(): Experiment[] {
     return EXPERIMENTS;

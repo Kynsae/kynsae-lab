@@ -1,0 +1,42 @@
+.label {
+    margin-bottom: 6px;
+    color: var(--grey100);
+}
+
+.container {
+    cursor: pointer;
+    border-radius: 5px;
+    height: 35px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: var(--padding-small);
+}
+
+.switch {
+    cursor: pointer;
+    touch-action: none;
+    background-color: var(--background200);
+    padding: var(--padding-small);
+    box-sizing: border-box;
+    border-radius: 5px;
+    height: 35px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-small);
+    color: var(--grey100);
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: var(--background300);
+    }
+}
+
+.switch-active {
+    color: white;
+    background-color: var(--background300);
+}

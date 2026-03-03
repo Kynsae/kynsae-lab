@@ -1,0 +1,41 @@
+<p class="label">{{ label() }}</p>
+
+<div [class.container-active]="isOpen()" class="container">
+    <div
+        class="preview"
+        [style.background-color]="value()"
+        (click)="togglePicker(); $event.stopPropagation()"
+    ></div>
+    <input
+        #hexInput
+        class="hex-input"
+        type="text"
+        [value]="value()"
+        (input)="onHexInput($event)"
+        (focus)="onHexFocus($event)"
+        (blur)="onHexBlur($event)"
+    >
+</div>
+
+<div [class.open]="isOpen()" class="popover">
+    <div class="picker-wrapper">
+        <canvas
+            #picker
+            class="picker-canvas"
+            width="200"
+            height="200"
+            (pointerdown)="onPickerPointerDown($event)"
+        ></canvas>
+        <div class="picker-dot" [style.left]="pickerDotStyle().left" [style.top]="pickerDotStyle().top"></div>
+    </div>
+    <div class="hue-wrapper">
+        <canvas
+            #hue
+            class="hue-canvas"
+            width="200"
+            height="12"
+            (pointerdown)="onHuePointerDown($event)"
+        ></canvas>
+        <div class="hue-dot" [style.left]="hueDotStyle().left"></div>
+    </div>
+</div>

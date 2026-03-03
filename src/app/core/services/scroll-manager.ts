@@ -14,13 +14,16 @@ export class ScrollManager {
   public readonly limit = signal(0);
 
   /** 
-   * Initializes scroll: Lenis on desktop, native scroll listener on mobile. 
+   * Initializes scroll: Lenis on desktop, native scroll listener on mobile.
+   * Pass a custom scroll container (e.g. .viewport) when the document doesn't scroll.
    */
-  public init(): void {
+  public init(wrapper?: HTMLElement): void {
     this.lenis = new Lenis({
+      wrapper: wrapper ?? window,
+      content: wrapper ? wrapper : document.documentElement,
       autoRaf: true,
       lerp: .1,
-      duration: 0.4,
+      duration: 0.9,
     });
 
     this.lenis.on('scroll', () => {

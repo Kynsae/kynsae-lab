@@ -6,6 +6,10 @@ import { CustomTextInput } from '../../components/custom-text-input/custom-text-
 import { ButtonDropdown } from '../../components/button-dropdown/button-dropdown';
 import { ExperimentPreview } from '../../components/experiment-preview/experiment-preview';
 import { Button } from '../../components/button/button';
+import { Slider } from '../../components/slider/slider';
+import { Switch } from '../../components/switch/switch';
+import { ColorPicker } from '../../components/color-picker/color-picker';
+import { InfoButton } from '../../components/info-button/info-button';
 
 @Component({
   selector: 'app-panel',
@@ -13,13 +17,17 @@ import { Button } from '../../components/button/button';
     CustomTextInput,
     ButtonDropdown,
     ExperimentPreview,
-    Button
+    Button,
+    Slider,
+    Switch,
+    ColorPicker,
+    InfoButton
   ],
   templateUrl: './panel.html',
   styleUrl: './panel.scss',
 })
 export class Panel {
-  private readonly experimentManager = inject(ExperimentManager);
+  public readonly experimentManager = inject(ExperimentManager);
   private readonly textSearch = inject(TextSearchService);
 
   public experiments = signal<Experiment[]>([]);

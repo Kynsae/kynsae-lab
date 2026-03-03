@@ -1,0 +1,11 @@
+<p class="label">{{ label() }}</p>
+
+<div class="container">
+    <div (click)="value.set(true)" [class.switch-active]="value()" class="switch">
+        TRUE
+    </div>
+
+    <div (click)="value.set(false)" [class.switch-active]="!value()" class="switch">
+        FALSE
+    </div>
+</div>

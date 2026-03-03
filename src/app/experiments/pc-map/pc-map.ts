@@ -16,15 +16,16 @@ export class PCMap implements OnInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) containerRef!: ElementRef;
 
   percentage = 0;
+  isDayMode = true;
   clickRadius = 2.5;
   maxClickDuration = 2;
   clickStrength = 2.5;
   moveWindow = 0.3;
   centerRadius = 0.10;
   centerFalloff = 0.05;
-  particleSize = 2.0;
-  backgroundColor = '#000000';
-  backgroundAlpha = 0;
+  particleSize = 3.0;
+  backgroundColor = '#373f49';
+  backgroundAlpha = 1;
 
   @Input() set progress(value: number) {
     if (value >= 0 && value <= 100) {
@@ -53,10 +54,6 @@ export class PCMap implements OnInit, OnDestroy {
     this.cameraController.update(progress);
   }
 
-  protected onPercentageChange(): void {
-    this.applyPercentage();
-  }
-
   protected onSettingsChange(): void {
     this.modelLoader.updateSettings({
       clickRadius: this.clickRadius,
@@ -69,6 +66,20 @@ export class PCMap implements OnInit, OnDestroy {
     });
   }
 
+  protected async onModeChange(): Promise<void> {
+    this.backgroundColor = this.isDayMode ? '#373f49' : '#000000';
+    this.onBackgroundChange();
+    const path = this.isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
+    await this.modelLoader.load(this.scene, path, () => {});
+    this.applyPercentage();
+    this.onSettingsChange();
+  }
+
+  private async loadModel(): Promise<THREE.Vector3> {
+    const path = this.isDayMode ? 'experiments/002/map-model-day.ply' : 'experiments/002/map-model-night.ply';
+    return this.modelLoader.load(this.scene, path, () => {});
+  }
+
   protected onBackgroundChange(): void {
     const color = new THREE.Color(this.backgroundColor);
     this.renderer.setClearColor(color.getHex(), this.backgroundAlpha);
@@ -79,9 +90,7 @@ export class PCMap implements OnInit, OnDestroy {
 
     this.cameraController.init(this.scene, 'experiments/002/camera.glb');
 
-    const center = await this.modelLoader.load(this.scene, 'experiments/002/map-model-day.ply', (progress) => {
-      // console.log(`Progress: ${progress.toFixed(2)}%`);
-    });
+    const center = await this.loadModel();
     
     this.ngZone.runOutsideAngular(() => this.startAnimation());
     this.onBackgroundChange();

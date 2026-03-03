@@ -1,0 +1,13 @@
+<p class="label">{{ label() }}</p>
+
+<div
+  class="container"
+  [class.dragging]="isDragging()"
+  (pointerdown)="onPointerDown($event)"
+>
+  <span class="value">{{ value() }}</span>
+  <div #track class="track">
+    <div class="fill" [style.width.%]="percentage()"></div>
+    <div [class.thumb-dragging]="isDragging()" class="thumb-outline" [style.left.%]="percentage()"></div>
+  </div>
+</div>

@@ -2,13 +2,12 @@
 
 <div class="pc-map-controls">
   <div class="control-group">
-    <label>
-      Percentage
-      <input type="range" min="0" max="100" [(ngModel)]="percentage" (ngModelChange)="onPercentageChange()" />
-    </label>
-    <span>{{ percentage }}%</span>
+    <label>Day / Night</label>
+    <div class="day-night-switch">
+      <button type="button" [class.active]="isDayMode" (click)="isDayMode = true; onModeChange()">Day</button>
+      <button type="button" [class.active]="!isDayMode" (click)="isDayMode = false; onModeChange()">Night</button>
+    </div>
   </div>
-
   <div class="control-group">
     <label>
       Click radius

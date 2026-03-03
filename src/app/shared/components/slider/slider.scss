@@ -1,0 +1,74 @@
+.label {
+    margin-bottom: 6px;
+    color: var(--grey100);
+}
+
+.container {
+    cursor: pointer;
+    touch-action: none;
+    background-color: var(--background200);
+    padding: var(--padding-small);
+    box-sizing: border-box;
+    border-radius: 5px;
+    height: 35px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: var(--padding-small);
+
+    &:hover {
+        background-color: var(--background300);
+    }
+
+    &.dragging {
+        cursor: grabbing;
+    }
+}
+
+.track {
+    flex: 1;
+    position: relative;
+    height: 6px;
+    background-color: var(--background400);
+    border-radius: 3px;
+}
+
+.fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: var(--active);
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.thumb-outline {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    width: 20px;
+    aspect-ratio: 1;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none;
+    transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out;
+    opacity: 0;
+
+    .container:hover & {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+    }
+}
+
+.value {
+    min-width: 3ch;
+    text-align: right;
+}
+
+.thumb-dragging {
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 1;
+}

@@ -37,7 +37,7 @@ export class ModelManager {
     uMoveWindow: { value: 0.3 },
     uCenterRadius: { value: 0.10 },
     uCenterFalloff: { value: 0.05 },
-    uPointSize: { value: 2.0 },
+    uPointSize: { value: 3.0 },
   };
 
   constructor() {
@@ -49,6 +49,13 @@ export class ModelManager {
   }
 
   public async load(scene: THREE.Scene, modelPath: string, onProgress: (progress: number) => void): Promise<THREE.Vector3> {
+    // Remove and dispose existing model before loading a new one
+    if (this.points) {
+      scene.remove(this.points);
+      this.points.geometry.dispose();
+      (this.points.material as THREE.Material).dispose();
+    }
+
     return new Promise((resolve) => {
       this.loader.load(modelPath,
         async (geometry) => {

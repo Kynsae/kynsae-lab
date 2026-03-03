@@ -7,13 +7,31 @@
     box-sizing: border-box;
 }
 
+.panel-left, .panel-right {
+    transition: transform 0.3s ease-in-out;
+}
+
+.panel-right {
+    position: absolute;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    transform: translateX(100%);
+}
+
+.panel-active {
+    transform: translateX(-100%);
+}
+
 .container {
+    position: relative;
     width: 100%;
     height: 100%;
     background-color: var(--background100);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .section {
@@ -41,7 +59,7 @@
     flex-direction: column;
     gap: var(--padding-medium);
     height: 100%;
-    overflow-y: auto;
+    overflow: auto;
 
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -62,4 +80,12 @@
     align-items: center;
     justify-content: center;
     gap: var(--padding-small);
+}
+
+.pr-name {
+    margin-top: var(--padding-small);
+}
+
+.pr-description {
+    color: var(--grey100);
 }

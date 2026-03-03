@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { NgComponentOutlet } from '@angular/common';
@@ -24,6 +24,14 @@ export class Experiments {
     return (id ? this.experimentManager.getById(id) : undefined)?.component ?? null;
   });
 
+  constructor() {
+    effect(() => {
+      const id = this.routeId();
+      const experiment = id ? this.experimentManager.getById(id) : undefined;
+      this.experimentManager.activeExperiment.set(experiment ?? null);
+    });
+  }
+
   public lerp(
     rangeStart: number,
     rangeEnd: number,
@@ -31,8 +39,8 @@ export class Experiments {
     pageEnd: number,
     currentScrollY: number
   ): number {
-    const startY = this.scrollManager.limit() * (pageStart - 1);
-    const endY = this.scrollManager.limit() * pageEnd;
+    const startY = window.innerHeight * (pageStart - 1);
+    const endY = window.innerHeight * pageEnd;
 
     let t = (Math.max(startY, Math.min(currentScrollY, endY)) - startY) / (endY - startY);
     t = Math.max(0, Math.min(1, t));
@@ -41,6 +49,6 @@ export class Experiments {
   }
 
   percentage() {
-    return this.lerp(0, 100, 1, 2, this.scrollManager.actualScroll());
+    return this.lerp(0, 100, 1, 3, this.scrollManager.actualScroll());
   }
 }

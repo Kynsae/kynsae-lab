@@ -1,41 +1,83 @@
 <div class="container">
-    <div class="section">
-        <app-custom-text-input
-            icon="icons/search.svg"
-            placeholder="Search.."
-            [(value)]="search"
-        ></app-custom-text-input>
-
-        <div class="flex">
-            <app-button-dropdown 
-                text="TAGS" 
-                icon="icons/arrow-down.svg"
-                [multiSelect]="true"
-                [menus]="['DESIGN', 'WEBSITE', 'ART', 'ALL', 'MOBILE', 'AI', 'DEVELOPMENT', 'GAME', 'OTHER', 'RESEARCH']"
-                (selected)="onTagsSelected($event)"
-            ></app-button-dropdown>
-
-            <app-button-dropdown 
-                icon="icons/filter.svg"
-                position="right"
-                [menus]="['RECENT', 'OLDER']"
-                (selected)="onSelected($event)"
-            ></app-button-dropdown>
+    <div [class.panel-active]="experimentManager.activeExperiment()?.name" class="panel-left">
+        <div class="section">
+            <app-custom-text-input
+                icon="icons/search.svg"
+                placeholder="Search.."
+                [(value)]="search"
+            ></app-custom-text-input>
+    
+            <div class="flex">
+                <app-button-dropdown 
+                    text="TAGS" 
+                    icon="icons/arrow-down.svg"
+                    [multiSelect]="true"
+                    [menus]="['DESIGN', 'WEBSITE', 'ART', 'ALL', 'MOBILE', 'AI', 'DEVELOPMENT', 'GAME', 'OTHER', 'RESEARCH']"
+                    (selected)="onTagsSelected($event)"
+                ></app-button-dropdown>
+    
+                <app-button-dropdown 
+                    icon="icons/filter.svg"
+                    position="right"
+                    [menus]="['RECENT', 'OLDER']"
+                    (selected)="onSelected($event)"
+                ></app-button-dropdown>
+            </div>
+        </div>
+    
+        <div class="h-separator"></div>
+    
+        <div class="section experiments">
+            @for(experiment of experiments(); track $index) {
+                <app-experiment-preview [experiment]="experiment"></app-experiment-preview>
+            }
+    
+            @if(searching() && experiments().length === 0) {
+                <div class="no-results">
+                    <p>No results found :(</p>
+                    <app-button (click)="clearSearch()">CLEAR SEARCH</app-button>
+                </div>
+            }
         </div>
     </div>
 
-    <div class="h-separator"></div>
+    <div [class.panel-active]="experimentManager.activeExperiment()?.name" class="panel-right">
+        <div class="section">
+            <app-button (click)="experimentManager.activeExperiment.set(null)" image="icons/arrow-left.svg"></app-button>
+            
+            <p class="pr-name">{{ experimentManager.activeExperiment()?.name }}</p>
+            <p class="pr-description">{{ experimentManager.activeExperiment()?.description }}</p>
 
-    <div class="section experiments">
-        @for(experiment of experiments(); track $index) {
-            <app-experiment-preview [experiment]="experiment"></app-experiment-preview>
-        }
+            <div style="display: flex; gap: var(--padding-small);">
+                <app-info-button
+                    label="ID"
+                    value="001"
+                ></app-info-button>
 
-        @if(searching() && experiments().length === 0) {
-            <div class="no-results">
-                <p>No results found :(</p>
-                <app-button (click)="clearSearch()">CLEAR SEARCH</app-button>
+                <app-info-button
+                    label="DATE"
+                    value="2024"
+                ></app-info-button>
             </div>
-        }
+        </div>
+
+        <div class="h-separator"></div>
+
+        <div class="section">
+            <app-slider
+                label="Night Percentage"
+                [min]="0"
+                [max]="100"
+                [step]="1"
+            ></app-slider>
+
+            <app-switch
+                label="Show Rings"
+            ></app-switch>
+
+            <app-color-picker
+                label="Planet Color"
+            ></app-color-picker>
+        </div>
     </div>
 </div>

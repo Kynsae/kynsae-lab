@@ -7,8 +7,12 @@
     box-sizing: border-box;
 }
 
-.panel-left, .panel-right {
-    transition: transform 0.3s ease-in-out;
+.panel-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    transition: transform 0.5s cubic-bezier(1, 0, .39, .86);
 }
 
 .panel-right {
@@ -17,6 +21,10 @@
     width: 100%;
     height: 100%;
     transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(1, 0, .39, .86);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .panel-active {
@@ -27,6 +35,7 @@
     position: relative;
     width: 100%;
     height: 100%;
+    min-height: 0;
     background-color: var(--background100);
     border-radius: 10px;
     display: flex;
@@ -58,7 +67,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--padding-medium);
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     overflow: auto;
 
     scrollbar-width: none;
@@ -101,4 +111,24 @@
     color: var(--grey100);
     font-size: 11px;
     margin-bottom: var(--padding-small);
+}
+
+.settings-scroll-wrapper {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+.settings-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }

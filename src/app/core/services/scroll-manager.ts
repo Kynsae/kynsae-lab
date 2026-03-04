@@ -15,12 +15,14 @@ export class ScrollManager {
 
   /** 
    * Initializes scroll: Lenis on desktop, native scroll listener on mobile.
-   * Pass a custom scroll container (e.g. .viewport) when the document doesn't scroll.
+   * Pass wrapper (scroll container) and content (its direct child) when the document doesn't scroll.
    */
-  public init(wrapper?: HTMLElement): void {
+  public init(wrapper?: HTMLElement, content?: HTMLElement): void {
+    const w = wrapper ?? window;
+    const c = content ?? (wrapper ? (wrapper.firstElementChild as HTMLElement) ?? wrapper : document.documentElement);
     this.lenis = new Lenis({
-      wrapper: wrapper ?? window,
-      content: wrapper ? wrapper : document.documentElement,
+      wrapper: w,
+      content: c,
       autoRaf: true,
       lerp: .1,
       duration: 0.9,
@@ -44,5 +46,19 @@ export class ScrollManager {
    */
   public start(): void {
     this.lenis?.start();
+  }
+
+  /** 
+   * Scrolls to top. Use on route change to reset scroll position. 
+   */
+  public scrollToTop(): void {
+    this.lenis?.scrollTo(0, { immediate: true });
+  }
+
+  /** 
+   * Scrolls to a specific position. 
+   */
+  public scrollTo(y: number, immediate = false): void {
+    this.lenis?.scrollTo(y, { immediate });
   }
 }

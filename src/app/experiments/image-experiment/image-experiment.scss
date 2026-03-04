@@ -1,0 +1,41 @@
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-medium);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.image {
+  width: 75%;
+  height: 75%;
+  object-fit: contain;
+  will-change: transform;
+}
+
+.image-background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  will-change: transform;
+  scale: 1.1;
+}
+
+.blurry {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  z-index: -1;
+}

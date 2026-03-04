@@ -8,4 +8,5 @@ export interface Experiment {
     year: string;
     component: any;
     settings?: ExperimentSetting[];
+    info?: string;
 }

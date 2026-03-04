@@ -12,7 +12,7 @@
                     text="TAGS" 
                     icon="icons/arrow-down.svg"
                     [multiSelect]="true"
-                    [menus]="['DESIGN', 'WEBSITE', 'ART', 'ALL', 'MOBILE', 'AI', 'DEVELOPMENT', 'GAME', 'OTHER', 'RESEARCH']"
+                    [menus]="tags()"
                     (selected)="onTagsSelected($event)"
                 ></app-button-dropdown>
     
@@ -27,7 +27,7 @@
     
         <div class="h-separator"></div>
     
-        <div class="section experiments">
+        <div class="section experiments" data-lenis-prevent>
             @for (experiment of experiments(); track experiment.id) {
                 <app-experiment-preview (click)="showSettings.set(true)" [experiment]="experiment"></app-experiment-preview>
             }
@@ -63,8 +63,9 @@
 
         <div class="h-separator"></div>
 
-        <div class="section">
-            @for (setting of experimentManager.activeExperiment()?.settings ?? []; track setting.key) {
+        <div class="settings-scroll-wrapper">
+            <div #settingsScroll class="section settings-scroll" data-lenis-prevent>
+                @for (setting of experimentManager.activeExperiment()?.settings ?? []; track setting.key) {
                 <div class="setting-container">
                     <p class="setting-label">{{ setting.label }}</p>
                 
@@ -96,6 +97,8 @@
                     }
                 </div>
             }
+            </div>
+            <app-scrollbar [scrollTarget]="settingsScroll"></app-scrollbar>
         </div>
     </div>
 </div>

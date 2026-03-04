@@ -29,16 +29,16 @@ export class PlanetGen implements OnDestroy {
   @Output() sceneReady = new EventEmitter<void>();
   
   @Input()
-  set nightPercentage(value: number) {
-    if (value < 0 || value > 100 || value === this._nightPercentage) {
+  set progress(value: number) {
+    if (value < 0 || value > 100 || value === this._progress) {
       return;
     }
-    this._nightPercentage = value;
+    this._progress = value;
     this.planetShadowStyles = this.planetStyleService.updatePlanetShadow(value);
     this.cdr.markForCheck();
   }
-  get nightPercentage() {
-    return this._nightPercentage;
+  get progress() {
+    return this._progress;
   }
   mouseOffsetX: number = 0;
   mouseOffsetY: number = 0;
@@ -46,13 +46,13 @@ export class PlanetGen implements OnDestroy {
   private targetMouseOffsetY: number = 0;
   private rafId: number | null = null;
   private readonly smoothingFactor: number = 0.1;
-  private _nightPercentage: number = 0;
+  private _progress: number = 0;
   private resizeObserver: ResizeObserver | null = null;
 
   private readonly webglService = inject(WebGL);
   private readonly planetStyleService = inject(PlanetStyle);
   private readonly cdr = inject(ChangeDetectorRef);
-  planetShadowStyles: { [key: string]: string } = this.planetStyleService.updatePlanetShadow(this._nightPercentage);
+  planetShadowStyles: { [key: string]: string } = this.planetStyleService.updatePlanetShadow(this._progress);
 
   ngAfterViewInit() { 
     this.initWebGL(); 

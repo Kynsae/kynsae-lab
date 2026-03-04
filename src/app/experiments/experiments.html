@@ -1,7 +1,18 @@
 <div class="container">
-  @if (experimentComponent(); as component) {
-    <ng-container *ngComponentOutlet="component; inputs: experimentInputs()" />
-  } @else {
-    <p class="not-found">Experiment not found.</p>
-  }
+  <div class="focus">
+    @if (experimentComponent(); as component) {
+      <ng-container *ngComponentOutlet="component; inputs: experimentInputs()" />
+      
+      @if (activeExperiment()?.info) {
+        <app-info-pill
+          [visible]="infoPillVisible()"
+          [experimentId]="activeExperiment()?.id ?? ''"
+          [content]="activeExperiment()?.info ?? ''"
+          (closeClicked)="onInfoPillClose()"
+        />
+      }
+    } @else {
+      <p class="not-found">Experiment not found.</p>
+    }
+  </div>
 </div>

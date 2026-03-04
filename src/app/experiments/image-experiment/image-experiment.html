@@ -1,0 +1,20 @@
+<div
+  class="image-container"
+  (mousemove)="onMouseMove($event)"
+  (mouseleave)="onMouseLeave()"
+>
+  <img
+    [src]="imageSrc"
+    [alt]="experimentId"
+    class="image-background"
+    [style.transform]="backgroundTransform"
+  />
+  <div class="blurry"></div>
+
+  <img
+    [src]="imageSrc"
+    [alt]="experimentId"
+    class="image"
+    [style.transform]="foregroundTransform"
+  />
+</div>

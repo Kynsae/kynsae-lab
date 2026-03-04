@@ -1,0 +1,11 @@
+<div [class.visible]="visible()" class="container">
+    <div class="header">
+        <p>{{ experimentId() }} - INFO</p>
+
+        <img src="icons/close.svg" alt="Close" class="close" (click)="closeClicked.emit()">
+    </div>
+
+    <div class="content">
+        {{ content() }}
+    </div>
+</div>

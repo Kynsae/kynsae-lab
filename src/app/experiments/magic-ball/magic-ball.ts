@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Input, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 
 @Component({
@@ -12,7 +12,7 @@ export class MagicBall implements OnInit, OnDestroy {
 
   private ngZone = inject(NgZone);
   private scene!: THREE.Scene;
-  private camera!: THREE.OrthographicCamera;
+  private camera!: THREE.OrthographicCamera | THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private particleSystem!: THREE.Points;
   private animationId!: number;
@@ -20,6 +20,76 @@ export class MagicBall implements OnInit, OnDestroy {
   private targetRotationY = 0;
   private currentRotationX = 0;
   private currentRotationY = 0;
+
+  // Live-adjustable params (from settings panel)
+  private _perspectiveCamera = false;
+  private _sizeMultiplier = 1;
+  private _color = '#5100FF';
+  private _rotationAmplitude = Math.PI / 3;
+  private _particleCount = 300000;
+  private _radius = 4;
+  private _layerCount = 10;
+  private _layerSpacing = 1.1;
+  private _minSliceRadius = 0.1;
+  private _particleSize = 4;
+
+  @Input() set perspectiveCamera(v: boolean) {
+    if (this._perspectiveCamera !== v) {
+      this._perspectiveCamera = v;
+      this.recreateCamera();
+    }
+  }
+  @Input() set sizeMultiplier(v: number) {
+    if (this._sizeMultiplier !== v) {
+      this._sizeMultiplier = v;
+      this.updateUniforms();
+    }
+  }
+  @Input() set color(v: string) {
+    if (this._color !== v) {
+      this._color = v;
+      this.updateUniforms();
+    }
+  }
+  @Input() set rotationAmplitude(v: number) {
+    this._rotationAmplitude = (v * Math.PI) / 180;
+  }
+  @Input() set particleCount(v: number) {
+    if (this._particleCount !== v) {
+      this._particleCount = v;
+      this.rebuildParticlePlanet();
+    }
+  }
+  @Input() set radius(v: number) {
+    if (this._radius !== v) {
+      this._radius = v;
+      this.rebuildParticlePlanet();
+    }
+  }
+  @Input() set layerCount(v: number) {
+    if (this._layerCount !== v) {
+      this._layerCount = v;
+      this.rebuildParticlePlanet();
+    }
+  }
+  @Input() set layerSpacing(v: number) {
+    if (this._layerSpacing !== v) {
+      this._layerSpacing = v;
+      this.rebuildParticlePlanet();
+    }
+  }
+  @Input() set minSliceRadius(v: number) {
+    if (this._minSliceRadius !== v) {
+      this._minSliceRadius = v;
+      this.rebuildParticlePlanet();
+    }
+  }
+  @Input() set particleSize(v: number) {
+    if (this._particleSize !== v) {
+      this._particleSize = v;
+      this.rebuildParticlePlanet();
+    }
+  }
 
   ngOnInit(): void {
     this.initScene();
@@ -47,18 +117,7 @@ export class MagicBall implements OnInit, OnDestroy {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
 
-    // Camera setup - Orthographic
-    const aspect = window.innerWidth / window.innerHeight;
-    const viewSize = 8; // View size in world units
-    this.camera = new THREE.OrthographicCamera(
-      -viewSize * aspect / 2,  // left
-      viewSize * aspect / 2,   // right
-      viewSize / 2,            // top
-      -viewSize / 2,           // bottom
-      0.1,                     // near
-      1000                     // far
-    );
-    this.camera.position.z = 10;
+    this.createCamera();
 
     // Renderer setup
     this.renderer = new THREE.WebGLRenderer({ 
@@ -70,21 +129,58 @@ export class MagicBall implements OnInit, OnDestroy {
     this.containerRef.nativeElement.appendChild(this.renderer.domElement);
   }
 
+  private createCamera(): void {
+    const aspect = window.innerWidth / window.innerHeight;
+    const viewSize = 8;
+    const z = 10;
+
+    if (this._perspectiveCamera) {
+      this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
+    } else {
+      this.camera = new THREE.OrthographicCamera(
+        -viewSize * aspect / 2,
+        viewSize * aspect / 2,
+        viewSize / 2,
+        -viewSize / 2,
+        0.1,
+        1000
+      );
+    }
+    this.camera.position.z = z;
+  }
+
+  private recreateCamera(): void {
+    if (!this.camera) return;
+    this.createCamera();
+  }
+
+  private updateUniforms(): void {
+    if (!this.particleSystem?.material || !(this.particleSystem.material instanceof THREE.ShaderMaterial)) return;
+    const mat = this.particleSystem.material as THREE.ShaderMaterial;
+    const u = mat.uniforms;
+    if (u['sizeMultiplier']) (u['sizeMultiplier'] as { value: number }).value = this._sizeMultiplier;
+    if (u['color']) (u['color'] as { value: THREE.Color }).value.set(this._color);
+  }
+
+  private rebuildParticlePlanet(): void {
+    if (!this.scene || !this.particleSystem) return;
+    this.scene.remove(this.particleSystem);
+    this.particleSystem.geometry.dispose();
+    if (this.particleSystem.material instanceof THREE.Material) {
+      this.particleSystem.material.dispose();
+    }
+    this.createParticlePlanet();
+  }
+
   private createParticlePlanet(): void {
-    const particleCount = 300000;
-    const radius = 4;
-    
-    // Layer/Level settings
-    const layerCount = 10;  // Number of layers/slices/levels (horizontal planes)
-    const layerSpacing = 1.1; // Spacing between layers (1.0 = normal, <1.0 = compressed, >1.0 = spread out)
-    const minSliceRadius = .1; // Minimum radius for top/bottom slices
-    
-    // Particle size settings
-    const particleSize = 4;  // Single size for all particles
-    const sizeMultiplier = 20.0; // Overall size multiplier (in vertex shader)
-    
-    // Single blue color
-    const blueColor = new THREE.Color(0x5100FF);
+    const particleCount = this._particleCount;
+    const radius = this._radius;
+    const layerCount = this._layerCount;
+    const layerSpacing = this._layerSpacing;
+    const minSliceRadius = this._minSliceRadius;
+    const particleSize = this._particleSize;
+    const sizeMultiplier = this._sizeMultiplier;
+    const blueColor = new THREE.Color(this._color);
     
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -197,7 +293,7 @@ export class MagicBall implements OnInit, OnDestroy {
 
         void main() {
           vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size;
+          gl_PointSize = size * sizeMultiplier;
           gl_Position = projectionMatrix * mvPosition;
         }
       `,
@@ -244,19 +340,23 @@ export class MagicBall implements OnInit, OnDestroy {
     const offsetY = (event.clientY - centerY) / window.innerHeight;
     
     // Map offset to rotation angles (reduced amplitude, inverted X and Y)
-    const rotationAmplitude = Math.PI / 3; // Reduced from Math.PI (60 degrees max instead of 180)
-    this.targetRotationY = -offsetX * rotationAmplitude; // Inverted X
-    this.targetRotationX = -offsetY * rotationAmplitude; // Inverted Y
+    this.targetRotationY = -offsetX * this._rotationAmplitude;
+    this.targetRotationX = -offsetY * this._rotationAmplitude;
   }
 
   @HostListener('window:resize')
   onWindowResize(): void {
     const aspect = window.innerWidth / window.innerHeight;
-    const viewSize = 8; // View size in world units
-    this.camera.left = -viewSize * aspect / 2;
-    this.camera.right = viewSize * aspect / 2;
-    this.camera.top = viewSize / 2;
-    this.camera.bottom = -viewSize / 2;
+    const viewSize = 8;
+
+    if (this.camera instanceof THREE.PerspectiveCamera) {
+      this.camera.aspect = aspect;
+    } else if (this.camera instanceof THREE.OrthographicCamera) {
+      this.camera.left = -viewSize * aspect / 2;
+      this.camera.right = viewSize * aspect / 2;
+      this.camera.top = viewSize / 2;
+      this.camera.bottom = -viewSize / 2;
+    }
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }

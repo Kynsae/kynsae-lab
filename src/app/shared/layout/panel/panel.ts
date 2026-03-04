@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ExperimentManager } from '../../../core/services/experiment-manager';
 import { ExperimentSettingsService } from '../../../core/services/experiment-settings.service';
 import { TextSearchService } from '../../../core/services/text-search.service';
@@ -12,6 +12,7 @@ import { Slider } from '../../components/slider/slider';
 import { Switch } from '../../components/switch/switch';
 import { ColorPicker } from '../../components/color-picker/color-picker';
 import { InfoButton } from '../../components/info-button/info-button';
+import { Scrollbar } from '../../components/scrollbar/scrollbar';
 
 @Component({
   selector: 'app-panel',
@@ -23,7 +24,8 @@ import { InfoButton } from '../../components/info-button/info-button';
     Slider,
     Switch,
     ColorPicker,
-    InfoButton
+    InfoButton,
+    Scrollbar
   ],
   templateUrl: './panel.html',
   styleUrl: './panel.scss',
@@ -36,6 +38,17 @@ export class Panel {
   public experiments = signal<Experiment[]>([]);
   private readonly allExperiments: Experiment[] = [];
   public searching = signal<boolean>(false);
+
+  /** Unique tags from all experiments, with ALL first for "show all" */
+  public readonly tags = computed(() => {
+    const tagSet = new Set<string>();
+    for (const exp of this.allExperiments) {
+      for (const tag of exp.tags) {
+        tagSet.add(tag);
+      }
+    }
+    return ['ALL', ...[...tagSet].sort()];
+  });
   public search = signal<string>('');
   public selectedTags = signal<string[]>([]);
   public currentSort = signal<string | null>(null);

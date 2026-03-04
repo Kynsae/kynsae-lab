@@ -19,22 +19,21 @@ type ConnectorMeta = {
 export class NeonSphere implements OnInit, OnDestroy {
   @ViewChild('rendererContainer', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
 
-  private readonly sceneRadius = 1.3;
-  private readonly sliceCount = 70;
-  private readonly sliceSegments = 10020;
-  private readonly sliceThickness = 0.01;
-  private readonly radialThickness = 0.01;
-  private readonly sliceColor = 0x3E17FF;
-  private readonly slicePointSize = 1.0;
-  private readonly maxRightOffsetX = 5.0;
-  private readonly maxRightOffsetY = 4.0;
-  private readonly cutOffsetRange = 0.3;
-  private readonly cutOffsetMaxRatio = 0.9;
-  private readonly groupRotation = new THREE.Euler(
-    THREE.MathUtils.degToRad(-40),
-    THREE.MathUtils.degToRad(0),
-    THREE.MathUtils.degToRad(-20)
-  );
+  private _sceneRadius = 1.3;
+  private _sliceCount = 70;
+  private _sliceSegments = 5000;
+  private _sliceThickness = 0.01;
+  private _radialThickness = 0.01;
+  private _sliceColor = 0x3e17ff;
+  private _slicePointSize = 1.0;
+  private _maxRightOffsetX = 5.0;
+  private _maxRightOffsetY = 4.0;
+  private _cutOffsetRange = 0.3;
+  private _cutOffsetMaxRatio = 0.9;
+  private _rotationX = -40;
+  private _rotationY = 0;
+  private _rotationZ = -20;
+  private readonly groupRotation = new THREE.Euler(0, 0, 0);
   private readonly cameraPosition = new THREE.Vector3(0, 0.4, 3.2);
 
   private scene = new THREE.Scene();
@@ -59,8 +58,9 @@ export class NeonSphere implements OnInit, OnDestroy {
   private tmpEdgeA = new THREE.Vector3();
   private tmpEdgeB = new THREE.Vector3();
   private tmpEdgeLocal = new THREE.Vector3();
-  private readonly clippingOffset = 0.3;
-  private readonly orthoSize = 2.1;
+  private _clippingEnabled = true;
+  private _clippingOffset = 0.3;
+  private _orthoSize = 2.1;
 
   private geometries: THREE.BufferGeometry[] = [];
   private materials: THREE.Material[] = [];
@@ -79,6 +79,121 @@ export class NeonSphere implements OnInit, OnDestroy {
     }
   }
 
+  /** Progress from scroll (0–100), maps to offsetPercentage (0–1) */
+  @Input() public set progress(value: number) {
+    const p = typeof value === 'number' ? value / 100 : 1;
+    this.offsetPercentage = p;
+  }
+
+  @Input() set sliceColor(v: string) {
+    const hex = typeof v === 'string' ? new THREE.Color(v).getHex() : 0x3e17ff;
+    if (this._sliceColor !== hex) {
+      this._sliceColor = hex;
+      this.updateMaterial();
+    }
+  }
+  @Input() set slicePointSize(v: number) {
+    if (typeof v === 'number' && this._slicePointSize !== v) {
+      this._slicePointSize = v;
+      this.updateMaterial();
+    }
+  }
+  @Input() set sceneRadius(v: number) {
+    if (typeof v === 'number' && this._sceneRadius !== v) {
+      this._sceneRadius = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set sliceCount(v: number) {
+    if (typeof v === 'number' && this._sliceCount !== v) {
+      this._sliceCount = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set sliceSegments(v: number) {
+    if (typeof v === 'number' && this._sliceSegments !== v) {
+      this._sliceSegments = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set sliceThickness(v: number) {
+    if (typeof v === 'number' && this._sliceThickness !== v) {
+      this._sliceThickness = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set radialThickness(v: number) {
+    if (typeof v === 'number' && this._radialThickness !== v) {
+      this._radialThickness = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set maxRightOffsetX(v: number) {
+    if (typeof v === 'number' && this._maxRightOffsetX !== v) {
+      this._maxRightOffsetX = v;
+      this.updateCurrentOffsets();
+      if (this.isReady) this.updateOffsetTransforms();
+    }
+  }
+  @Input() set maxRightOffsetY(v: number) {
+    if (typeof v === 'number' && this._maxRightOffsetY !== v) {
+      this._maxRightOffsetY = v;
+      this.updateCurrentOffsets();
+      if (this.isReady) this.updateOffsetTransforms();
+    }
+  }
+  @Input() set cutOffsetRange(v: number) {
+    if (typeof v === 'number' && this._cutOffsetRange !== v) {
+      this._cutOffsetRange = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set cutOffsetMaxRatio(v: number) {
+    if (typeof v === 'number' && this._cutOffsetMaxRatio !== v) {
+      this._cutOffsetMaxRatio = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set rotationX(v: number) {
+    if (typeof v === 'number' && this._rotationX !== v) {
+      this._rotationX = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set rotationY(v: number) {
+    if (typeof v === 'number' && this._rotationY !== v) {
+      this._rotationY = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set rotationZ(v: number) {
+    if (typeof v === 'number' && this._rotationZ !== v) {
+      this._rotationZ = v;
+      this.rebuildSliceSphere();
+    }
+  }
+  @Input() set clippingEnabled(v: boolean) {
+    if (typeof v === 'boolean' && this._clippingEnabled !== v) {
+      this._clippingEnabled = v;
+      this.updateClipping();
+    }
+  }
+  @Input() set clippingOffset(v: number) {
+    if (typeof v === 'number' && this._clippingOffset !== v) {
+      this._clippingOffset = v;
+      if (this.isReady) this.renderFrame();
+    }
+  }
+  @Input() set orthoSize(v: number) {
+    if (typeof v === 'number' && this._orthoSize !== v) {
+      this._orthoSize = v;
+      if (this.isReady) {
+        this.resizeRenderer();
+        this.renderFrame();
+      }
+    }
+  }
+
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {
@@ -93,7 +208,7 @@ export class NeonSphere implements OnInit, OnDestroy {
   private initScene(): void {
     this.renderer.setPixelRatio(1);
     this.renderer.setClearColor(0x000000, 1);
-    this.renderer.localClippingEnabled = true;
+    this.renderer.localClippingEnabled = this._clippingEnabled;
     this.scene.add(this.slicesGroup);
     this.camera.position.copy(this.cameraPosition);
     this.camera.lookAt(0, 0, 0);
@@ -103,15 +218,20 @@ export class NeonSphere implements OnInit, OnDestroy {
   }
 
   private createSliceSphere(): void {
+    this.groupRotation.set(
+      THREE.MathUtils.degToRad(this._rotationX),
+      THREE.MathUtils.degToRad(this._rotationY),
+      THREE.MathUtils.degToRad(this._rotationZ)
+    );
     this.rightSliceGroups = [];
     this.connectorMetas = [];
     const material = new THREE.PointsMaterial({
-      color: this.sliceColor,
-      size: this.slicePointSize,
+      color: this._sliceColor,
+      size: this._slicePointSize,
       sizeAttenuation: true,
       blending: THREE.AdditiveBlending
     });
-    material.clippingPlanes = [this.clippingPlane];
+    material.clippingPlanes = this._clippingEnabled ? [this.clippingPlane] : [];
     this.materials.push(material);
 
     this.tmpQuat.setFromEuler(this.groupRotation);
@@ -121,22 +241,22 @@ export class NeonSphere implements OnInit, OnDestroy {
     const offsetWorld = this.getOffsetWorld(this.tmpOffsetWorld);
     const offsetLocal = this.getOffsetLocal(this.tmpOffsetLocal, offsetWorld);
 
-    const invSliceCount = 1 / this.sliceCount;
-    for (let i = 0; i <= this.sliceCount; i += 1) {
+    const invSliceCount = 1 / this._sliceCount;
+    for (let i = 0; i <= this._sliceCount; i += 1) {
       const t = i * invSliceCount;
       const theta = t * Math.PI;
-      const y = Math.cos(theta) * this.sceneRadius;
-      const sliceRadius = Math.sin(theta) * this.sceneRadius;
+      const y = Math.cos(theta) * this._sceneRadius;
+      const sliceRadius = Math.sin(theta) * this._sceneRadius;
       if (sliceRadius <= 0.01) continue;
-      const rawCutOffset = (Math.random() - 0.5) * this.cutOffsetRange;
-      const cutLimit = sliceRadius * this.cutOffsetMaxRatio;
+      const rawCutOffset = (Math.random() - 0.5) * this._cutOffsetRange;
+      const cutLimit = sliceRadius * this._cutOffsetMaxRatio;
       const cutOffset = THREE.MathUtils.clamp(rawCutOffset, -cutLimit, cutLimit);
 
       const { leftPoints, rightPoints } = this.createCirclePoints(
         sliceRadius,
-        this.sliceSegments,
-        this.sliceThickness,
-        this.radialThickness,
+        this._sliceSegments,
+        this._sliceThickness,
+        this._radialThickness,
         y,
         cutOffset,
         cutNormal,
@@ -166,9 +286,9 @@ export class NeonSphere implements OnInit, OnDestroy {
         const connector = this.createConnectorPoints(
           offsetLocal,
           sliceRadius,
-          this.sliceSegments,
-          this.sliceThickness,
-          this.radialThickness,
+          this._sliceSegments,
+          this._sliceThickness,
+          this._radialThickness,
           material
         );
         const connectorGroup = new THREE.Group();
@@ -181,6 +301,37 @@ export class NeonSphere implements OnInit, OnDestroy {
     }
 
     this.slicesGroup.position.copy(this.getCenterOffsetWorld(this.tmpCenterOffset, offsetWorld));
+  }
+
+  private updateMaterial(): void {
+    for (const mat of this.materials) {
+      if (mat instanceof THREE.PointsMaterial) {
+        mat.color.setHex(this._sliceColor);
+        mat.size = this._slicePointSize;
+      }
+    }
+    if (this.isReady) this.renderFrame();
+  }
+
+  private updateClipping(): void {
+    this.renderer.localClippingEnabled = this._clippingEnabled;
+    for (const mat of this.materials) {
+      mat.clippingPlanes = this._clippingEnabled ? [this.clippingPlane] : [];
+    }
+    if (this.isReady) this.renderFrame();
+  }
+
+  private rebuildSliceSphere(): void {
+    if (!this.isReady) return;
+    this.geometries.forEach((g) => g.dispose());
+    this.geometries = [];
+    this.materials.forEach((m) => m.dispose());
+    this.materials = [];
+    while (this.slicesGroup.children.length) {
+      this.slicesGroup.remove(this.slicesGroup.children[0]);
+    }
+    this.createSliceSphere();
+    this.updateOffsetTransforms();
   }
 
   private createCirclePoints(
@@ -218,8 +369,8 @@ export class NeonSphere implements OnInit, OnDestroy {
   }
 
   private updateCurrentOffsets(): void {
-    this.currentRightOffsetX = this.maxRightOffsetX * this.percentage;
-    this.currentRightOffsetY = this.maxRightOffsetY * this.percentage;
+    this.currentRightOffsetX = this._maxRightOffsetX * this.percentage;
+    this.currentRightOffsetY = this._maxRightOffsetY * this.percentage;
   }
 
   private updateOffsetTransforms(): void {
@@ -253,7 +404,7 @@ export class NeonSphere implements OnInit, OnDestroy {
   ): THREE.Points {
     const circumference = Math.max(1e-4, 2 * Math.PI * sliceRadius);
     const spacing = circumference / Math.max(1, segments);
-    const maxLength = Math.hypot(this.maxRightOffsetX, this.maxRightOffsetY);
+    const maxLength = Math.hypot(this._maxRightOffsetX, this._maxRightOffsetY);
     const length = Math.max(1e-4, maxLength);
     const steps = Math.max(2, Math.round(length / spacing));
     const geometry = new THREE.BufferGeometry();
@@ -403,7 +554,7 @@ export class NeonSphere implements OnInit, OnDestroy {
 
   private renderFrame(): void {
     const normal = this.camera.getWorldDirection(this.tmpVec3).negate();
-    const planePoint = this.scene.position.clone().addScaledVector(normal, -this.clippingOffset);
+    const planePoint = this.scene.position.clone().addScaledVector(normal, -this._clippingOffset);
     this.clippingPlane.setFromNormalAndCoplanarPoint(normal, planePoint);
     this.renderer.render(this.scene, this.camera);
   }
@@ -413,10 +564,10 @@ export class NeonSphere implements OnInit, OnDestroy {
     const width = Math.max(1, Math.floor(rect.width));
     const height = Math.max(1, Math.floor(rect.height));
     const aspect = width / height;
-    this.camera.left = -this.orthoSize * aspect;
-    this.camera.right = this.orthoSize * aspect;
-    this.camera.top = this.orthoSize;
-    this.camera.bottom = -this.orthoSize;
+    this.camera.left = -this._orthoSize * aspect;
+    this.camera.right = this._orthoSize * aspect;
+    this.camera.top = this._orthoSize;
+    this.camera.bottom = -this._orthoSize;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
   }

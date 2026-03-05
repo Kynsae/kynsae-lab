@@ -19,6 +19,17 @@ export class ExperimentSettingsService {
     return map[active.id] ?? {};
   });
 
+  /** Reset the active experiment's settings back to their defaults */
+  resetActiveToDefaults(): void {
+    const active = this.experimentManager.activeExperiment();
+    if (!active?.id || !active.settings?.length) return;
+
+    const map = { ...this.settingsMap() };
+    const defaults = Object.fromEntries(active.settings.map((d) => [d.key, d.defaultValue]));
+    map[active.id] = defaults;
+    this.settingsMap.set(map);
+  }
+
   /** Initialize settings from schema when experiment becomes active */
   initialize(experimentId: string, definitions: ExperimentSetting[]): void {
     const map = { ...this.settingsMap() };

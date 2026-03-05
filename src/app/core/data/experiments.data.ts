@@ -3,6 +3,8 @@ import { MagicBall } from "../../experiments/magic-ball/magic-ball";
 import { NeonSphere } from "../../experiments/neon-sphere/neon-sphere";
 import { PCMap } from "../../experiments/pc-map/pc-map";
 import { PlanetGen } from "../../experiments/planet-gen/planet-gen";
+import { StarRain } from "../../experiments/star-rain/star-rain";
+import { Torus } from "../../experiments/torus/torus";
 import { Experiment } from "../../shared/models/experiment.model";
 
 export const EXPERIMENTS: Experiment[] = [
@@ -43,7 +45,7 @@ export const EXPERIMENTS: Experiment[] = [
             { type: 'slider', key: 'moveWindow', label: 'Move Window', min: 0.1, max: 0.6, step: 0.01, defaultValue: 0.3 },
             { type: 'slider', key: 'centerRadius', label: 'Center Radius', min: 0.02, max: 0.3, step: 0.01, defaultValue: 0.10 },
             { type: 'slider', key: 'centerFalloff', label: 'Center Falloff', min: 0.01, max: 0.15, step: 0.01, defaultValue: 0.05 },
-            { type: 'slider', key: 'particleSize', label: 'Particle Size', min: 0.5, max: 4, step: 0.1, defaultValue: 3 },
+            { type: 'slider', key: 'particleSize', label: 'Particle Size', min: 0.5, max: 4, step: 0.1, defaultValue: 2 },
             { type: 'color', key: 'backgroundColor', label: 'Background Color', defaultValue: '#373f49' },
             { type: 'slider', key: 'backgroundAlpha', label: 'Background Alpha', min: 0, max: 1, step: 0.05, defaultValue: 1 },
         ],
@@ -99,10 +101,45 @@ export const EXPERIMENTS: Experiment[] = [
     },
     {
         id: '005',
-        name: 'ART: The cabin',
+        name: 'Forgotten world',
         description: 'Dithered effect.',
         tags: ['IMAGE', 'ART'],
         year: '2026',
         component: ImageExperiment,
+    },
+    {
+        id: '006',
+        name: 'Torus Text Tunnel',
+        description: '3D torus with animated text and interactive lighting.',
+        tags: ['WEBGL', 'WEB', 'TEXT'],
+        year: '2026',
+        component: Torus,
+        info: 'Move the mouse to interact with the torus. Click to change colors.',
+        settings: [
+            { type: 'slider', key: 'radiusScale', label: 'Radius Scale', min: 0.5, max: 1.5, step: 0.05, defaultValue: 1 },
+            { type: 'slider', key: 'idleRotationSpeedZ', label: 'Idle Spin Speed', min: 0, max: 0.02, step: 0.001, defaultValue: 0.003 },
+            { type: 'slider', key: 'physicsDamping', label: 'Damping', min: 0.9, max: 0.999, step: 0.001, defaultValue: 0.985 },
+            { type: 'slider', key: 'physicsImpulseScale', label: 'Impulse Scale', min: 0.02, max: 0.3, step: 0.01, defaultValue: 0.12 },
+            { type: 'slider', key: 'mouseSensitivity', label: 'Mouse Sensitivity', min: 0.0002, max: 0.005, step: 0.0001, defaultValue: 0.001 },
+            { type: 'slider', key: 'velocityScaling', label: 'Velocity Scaling', min: 0, max: 0.5, step: 0.01, defaultValue: 0.1 },
+            { type: 'slider', key: 'maxAngularSpeed', label: 'Max Angular Speed', min: 0.005, max: 0.1, step: 0.001, defaultValue: 0.03 },
+            { type: 'slider', key: 'bounceFactor', label: 'Bounce Factor', min: -1.5, max: 0, step: 0.05, defaultValue: -0.8 },
+        ],
+    },
+    {
+        id: '007',
+        name: 'Star Rain',
+        description: 'Full-screen star rain synchronized with scroll.',
+        tags: ['PARTICLES', 'WEBGL', 'WEB'],
+        year: '2026',
+        component: StarRain,
+        info: 'Scroll to control the intensity of the star rain.',
+        settings: [
+            { type: 'slider', key: 'trailLength', label: 'Trail Length', min: 2, max: 200, step: 1, defaultValue: 30 },
+            { type: 'slider', key: 'trailThickness', label: 'Trail Thickness', min: 0.2, max: 3, step: 0.1, defaultValue: 1 },
+            { type: 'slider', key: 'pointSize', label: 'Star Size', min: 0.1, max: 4.0, step: 0.1, defaultValue: 0.08 },
+            { type: 'color', key: 'headColorHex', label: 'Head Color', defaultValue: '#66b3ff' },
+            { type: 'color', key: 'tailColorHex', label: 'Tail Color', defaultValue: '#1f3eff' },
+        ],
     },
 ];

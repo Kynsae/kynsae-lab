@@ -11,7 +11,7 @@ import { ScrollManager } from '../../../core/services/scroll-manager';
 import { fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
 
-const HIDE_DELAY_MS = 300;
+const HIDE_DELAY_MS = 500;
 const HANDLE_HEIGHT_PX = 200;
 
 @Component({

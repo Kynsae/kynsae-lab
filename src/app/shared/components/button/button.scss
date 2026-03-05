@@ -2,6 +2,15 @@
     width: fit-content;
 }
 
+:host.full-width {
+    width: 100%;
+}
+
+:host.full-width .container {
+    width: 100%;
+    justify-content: center;
+}
+
 .container {
     cursor: pointer;
     background-color: var(--background200);
@@ -10,6 +19,7 @@
     border-radius: 5px;
     height: 35px;
     width: fit-content;
+    color: var(--grey100);
 
     display: flex;
     align-items: center;

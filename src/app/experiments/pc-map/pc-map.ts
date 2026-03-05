@@ -22,7 +22,7 @@ export class PCMap implements OnInit, OnDestroy {
   private _moveWindow = 0.3;
   private _centerRadius = 0.10;
   private _centerFalloff = 0.05;
-  private _particleSize = 3.0;
+  private _particleSize = 2.0;
   private _backgroundColor = '#373f49';
   private _backgroundAlpha = 1;
 

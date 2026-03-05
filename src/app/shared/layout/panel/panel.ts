@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ExperimentManager } from '../../../core/services/experiment-manager';
 import { ExperimentSettingsService } from '../../../core/services/experiment-settings.service';
 import { TextSearchService } from '../../../core/services/text-search.service';
@@ -31,6 +39,9 @@ import { Scrollbar } from '../../components/scrollbar/scrollbar';
   styleUrl: './panel.scss',
 })
 export class Panel {
+  private readonly settingsScrollRef =
+    viewChild<ElementRef<HTMLElement>>('settingsScroll');
+
   public readonly experimentManager = inject(ExperimentManager);
   public readonly settingsService = inject(ExperimentSettingsService);
   private readonly textSearch = inject(TextSearchService);
@@ -58,6 +69,15 @@ export class Panel {
   constructor() {
     this.allExperiments = this.experimentManager.getAll();
     this.experiments.set(this.allExperiments);
+
+    effect(() => {
+      const activeId = this.experimentManager.activeExperiment()?.id;
+      const settingsEl = this.settingsScrollRef()?.nativeElement;
+
+      if (!activeId || !settingsEl) return;
+
+      settingsEl.scrollTop = 0;
+    });
 
     effect(() => {
       const exp = this.experimentManager.activeExperiment();
@@ -154,5 +174,9 @@ export class Panel {
     if (key === 'isDayMode' && typeof value === 'boolean') {
       this.settingsService.setSetting('backgroundColor', value ? '#373f49' : '#000000');
     }
+  }
+
+  onResetSettings(): void {
+    this.settingsService.resetActiveToDefaults();
   }
 }

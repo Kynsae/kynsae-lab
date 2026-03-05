@@ -1,102 +1,85 @@
 <div class="container">
     <div [class.panel-active]="showSettings()" class="panel-left">
         <div class="section">
-            <app-custom-text-input
-                icon="icons/search.svg"
-                placeholder="Search.."
-                [(value)]="search"
-            ></app-custom-text-input>
-    
+            <app-custom-text-input icon="icons/search.svg" placeholder="Search.."
+                [(value)]="search"></app-custom-text-input>
+
             <div class="flex">
-                <app-button-dropdown 
-                    text="TAGS" 
-                    icon="icons/arrow-down.svg"
-                    [multiSelect]="true"
-                    [menus]="tags()"
-                    (selected)="onTagsSelected($event)"
-                ></app-button-dropdown>
-    
-                <app-button-dropdown 
-                    icon="icons/filter.svg"
-                    position="right"
-                    [menus]="['RECENT', 'OLDER']"
-                    (selected)="onSelected($event)"
-                ></app-button-dropdown>
+                <app-button-dropdown text="TAGS" icon="icons/arrow-down.svg" [multiSelect]="true" [menus]="tags()"
+                    (selected)="onTagsSelected($event)"></app-button-dropdown>
+
+                <app-button-dropdown icon="icons/filter.svg" position="right" [menus]="['RECENT', 'OLDER']"
+                    (selected)="onSelected($event)"></app-button-dropdown>
             </div>
         </div>
-    
+
         <div class="h-separator"></div>
-    
-        <div class="section experiments" data-lenis-prevent>
-            @for (experiment of experiments(); track experiment.id) {
+
+        <div class="experiments-scroll-wrapper">
+            <div #experimentsScroll class="section experiments" data-lenis-prevent>
+                @for (experiment of experiments(); track experiment.id) {
                 <app-experiment-preview (click)="showSettings.set(true)" [experiment]="experiment"></app-experiment-preview>
-            }
-    
-            @if(searching() && experiments().length === 0) {
+                }
+
+                @if(searching() && experiments().length === 0) {
                 <div class="no-results">
                     <p>No results found :(</p>
                     <app-button (click)="clearSearch()">CLEAR SEARCH</app-button>
                 </div>
-            }
+                }
+            </div>
+            <app-scrollbar [scrollTarget]="experimentsScroll"></app-scrollbar>
         </div>
     </div>
 
     <div [class.panel-active]="showSettings()" class="panel-right">
         <div class="section">
             <app-button (click)="showSettings.set(false)" image="icons/arrow-left.svg"></app-button>
-            
+
             <p class="pr-name">{{ experimentManager.activeExperiment()?.name }}</p>
             <p class="pr-description">{{ experimentManager.activeExperiment()?.description }}</p>
 
             <div style="display: flex; gap: var(--padding-small);">
-                <app-info-button
-                    label="ID"
-                    [value]="experimentManager.activeExperiment()?.id"
-                ></app-info-button>
+                <app-info-button label="ID" [value]="experimentManager.activeExperiment()?.id"></app-info-button>
 
-                <app-info-button
-                    label="DATE"
-                    [value]="experimentManager.activeExperiment()?.year"
-                ></app-info-button>
+                <app-info-button label="DATE" [value]="experimentManager.activeExperiment()?.year"></app-info-button>
             </div>
         </div>
 
         <div class="h-separator"></div>
 
+        @if (experimentManager.activeExperiment()?.settings?.length) {
+            <div class="section">
+                <app-button [fullWidth]="true" (click)="onResetSettings()">RESET TO DEFAULT</app-button>
+            </div>
+        }
+
+        <div class="h-separator"></div>
+        
         <div class="settings-scroll-wrapper">
             <div #settingsScroll class="section settings-scroll" data-lenis-prevent>
+
+
                 @for (setting of experimentManager.activeExperiment()?.settings ?? []; track setting.key) {
-                <div class="setting-container">
-                    <p class="setting-label">{{ setting.label }}</p>
-                
-                    @switch (setting.type) {
+                    <div class="setting-container">
+                        <p class="setting-label">{{ setting.label }}</p>
+
+                        @switch (setting.type) {
                         @case ('slider') {
-                            <app-slider
-                                [label]="setting.label"
-                                [min]="setting.min"
-                                [max]="setting.max"
-                                [step]="setting.step"
-                                [value]="getSliderValue(setting)"
-                                (valueChange)="onSettingChange(setting.key, $event)"
-                            />
+                        <app-slider [label]="setting.label" [min]="setting.min" [max]="setting.max" [step]="setting.step"
+                            [value]="getSliderValue(setting)" (valueChange)="onSettingChange(setting.key, $event)" />
                         }
                         @case ('switch') {
-                            <app-switch
-                                [label]="setting.label"
-                                [value]="getSwitchValue(setting)"
-                                (valueChange)="onSettingChange(setting.key, $event)"
-                            />
+                        <app-switch [label]="setting.label" [value]="getSwitchValue(setting)"
+                            (valueChange)="onSettingChange(setting.key, $event)" />
                         }
                         @case ('color') {
-                            <app-color-picker
-                                [label]="setting.label"
-                                [value]="getColorValue(setting)"
-                                (valueChange)="onSettingChange(setting.key, $event)"
-                            />
+                        <app-color-picker [label]="setting.label" [value]="getColorValue(setting)"
+                            (valueChange)="onSettingChange(setting.key, $event)" />
                         }
-                    }
-                </div>
-            }
+                        }
+                    </div>
+                }
             </div>
             <app-scrollbar [scrollTarget]="settingsScroll"></app-scrollbar>
         </div>

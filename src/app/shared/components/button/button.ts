@@ -5,7 +5,11 @@ import { Component, input } from '@angular/core';
   imports: [],
   templateUrl: './button.html',
   styleUrl: './button.scss',
+  host: {
+    '[class.full-width]': 'fullWidth()',
+  },
 })
 export class Button {
   public image = input<string>();
+  public fullWidth = input<boolean>(false);
 }

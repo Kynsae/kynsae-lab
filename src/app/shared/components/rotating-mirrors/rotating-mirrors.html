@@ -1,0 +1,5 @@
+<div #grid class="grid" [style.grid-template-columns]="'repeat(' + cols() + ', ' + cellSizePx + 'px)'" [style.grid-template-rows]="'repeat(' + rows() + ', ' + cellSizePx + 'px)'">
+  @for (cell of cells(); track cell.id) {
+    <div class="cell" [style.background-color]="getCellColor(cell)"></div>
+  }
+</div>

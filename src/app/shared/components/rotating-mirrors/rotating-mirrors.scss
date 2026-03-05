@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+$cell-size: 70px; // 20px square + 50px spacing
+
+.grid {
+  display: grid;
+  grid-auto-rows: $cell-size;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  gap: 0;
+}
+
+.cell {
+  width: $cell-size;
+  height: $cell-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease-out;
+}
+
+.square {
+  width: 20px;
+  height: 20px;
+  background: var(--background200);
+  border-radius: 2px;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+}

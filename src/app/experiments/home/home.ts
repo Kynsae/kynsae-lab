@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RotatingMirrors } from '../../shared/components/rotating-mirrors/rotating-mirrors';
+import { NebulaSplash } from './nebula-splash/nebula-splash';
 
 @Component({
   selector: 'app-home',
   imports: [
-    RotatingMirrors
+    NebulaSplash
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',

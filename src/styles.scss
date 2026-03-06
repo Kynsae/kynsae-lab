@@ -42,8 +42,13 @@ Fonts
 */
 
 @font-face {
-    font-family: 'JetBrains-Regular';
-    src: url('/fonts/jetbrains-regular.woff2') format('woff2');
+  font-family: 'JetBrains-Regular';
+  src: url('/fonts/jetbrains-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Aldrich-Regular';
+  src: url('/fonts/Aldrich-Regular.ttf');
 }
 
 /*

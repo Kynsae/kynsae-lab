@@ -1,4 +1,5 @@
 :host {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -11,21 +12,30 @@ app-rotating-mirrors {
 }
 
 .container {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 0;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: end;
     gap: 40px;
-    padding: var(--padding-medium);
+    padding: 90px;
     box-sizing: border-box;
-    background-color: var(--background100);
+}
+
+.title {
+    font-family: 'Aldrich-Regular';
+    font-size: 47px;
+    margin-bottom: 50px;
 }
 
 .section {
     display: flex;
     flex-direction: column;
     gap: var(--padding-small);
-    max-width: 500px;
+    max-width: 400px;
+    width: 100%;
     text-align: justify;
 }

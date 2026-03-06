@@ -8,45 +8,59 @@ const VERTEX_SHADER = `#version 300 es
 `;
 
 const FRAGMENT_SHADER = `#version 300 es
-precision highp float;
+precision mediump float;
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform vec2 iMouse;
 
 out vec4 fragColor;
 
-const int ITERATIONS = 120;
-const float BASE_STEP = 0.012;
+const int ITERATIONS = 90;
+const float BASE_STEP = 0.018;
 const float STEP_GAIN = 0.1;
 
-// 2D rotation matrix
-mat2 rot(float a){
-    float s = sin(a);
-    float c = cos(a);
-    return mat2(c, -s, s, c);
-}
+// Fixed rotation (0.25 rad) - precomputed to avoid sin/cos per iteration
+const mat2 ROT25 = mat2(0.9689, -0.2474, 0.2474, 0.9689);
 
-// Dark-mode filament palette
+// Dark-mode filament palette (slightly brighter)
 vec3 palette(float t){
-    vec3 a = vec3(0.02,0.02,0.04);
-    vec3 b = vec3(0.3,0.2,0.6);
-    vec3 c = vec3(1.0);
-    vec3 d = vec3(0.0,0.15,0.35);
-    return a + b*cos(6.28318*(c*t + d));
+  vec3 a = vec3(0.05,0.05,0.08);
+  vec3 b = vec3(0.38,0.28,0.7);
+  vec3 c = vec3(1.0);
+  vec3 d = vec3(0.0,0.15,0.35);
+  return a + b * cos(6.28318 * (c*t + d));
 }
 
-// New twisting flow movement
-vec2 twistFlow(vec2 pos, float z){
+// Twisting flow (mouse pull scaled by depth only, not time, so effect stays stable)
+vec2 twistFlow(vec2 pos, float z, float time, vec2 mouse){
     float angle = 0.5 * sin(z*0.8) + 0.3 * cos(z*0.6);
-    float offsetX = 0.2 * sin(z*1.5 + pos.y*2.0);
-    float offsetY = 0.2 * cos(z*1.3 + pos.x*2.5);
-    pos += vec2(offsetX, offsetY);
-    pos = pos * mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
-    return pos;
+    float c = cos(angle);
+    float s = sin(angle);
+    float depth = z - time;
+    float scale = 0.15 + 0.12 * depth;
+    vec2 mousePull = (mouse - 0.5) * scale;
+    pos += 0.2 * vec2(sin(z*1.5 + pos.y*2.0), cos(z*1.3 + pos.x*2.5)) + mousePull * vec2(c, s);
+    return mat2(c, -s, s, c) * pos;
+}
+
+// Turbulence: curl + uniform mouse swirl (same direction at all depths so all filaments react)
+vec2 turbulence(vec2 pos, float z, float time, vec2 mouse){
+    vec2 m = (mouse - 0.5);
+    float swirl = 0.28 * (0.7 + 0.3 * sin(z * 0.6));
+    vec2 vortex = vec2(-m.y, m.x) * swirl;
+
+    float n = sin(pos.x*2.3 + z*0.4) * cos(pos.y*2.7 - z*0.5) + time*0.2;
+    vec2 curl = vec2(cos(pos.y*3.2 + n), sin(pos.x*3.5 - n)) * 0.12;
+    return curl + vortex;
 }
 
 void main(){
     vec2 uv = (gl_FragCoord.xy - 0.5*iResolution) / iResolution.y;
+
+    // Mouse parallax: subtle offset so nebula follows cursor (iMouse in 0..1, center 0.5)
+    vec2 mouseOffset = (iMouse - 0.5) * 0.15;
+    uv -= mouseOffset;
 
     float time = iTime * 0.3;
     vec3 accum = vec3(0.0);
@@ -62,13 +76,15 @@ void main(){
         // Base position
         vec3 p = vec3(uv * dist * 2.0, dist + time);
 
-        // Apply twisting flow instead of simple spiral
-        p.xy = twistFlow(p.xy, p.z);
+        // Apply twisting flow instead of simple spiral (mouse affects flow)
+        p.xy = twistFlow(p.xy, p.z, time, iMouse);
 
-        // Slight structure rotation
-        p.xy *= rot(0.25);
+        p.xy = ROT25 * p.xy;
 
-        // Sharp filament field
+        // Turbulence: permanently warp the coordinates used for the filament field
+        p.xy += turbulence(p.xy, p.z, time, iMouse);
+
+        // Sharp filament field (sampled at warped position — shapes are distorted)
         float r = length(p.xy);
         float field = cos(r*15.0 - p.z*4.0) + cos(p.x*7.0 + p.y*6.0 + p.z*2.5);
 
@@ -82,8 +98,8 @@ void main(){
         stepSize += field * 0.1;
     }
 
-    // Depth boost
-    accum = pow(accum, vec3(1.6));
+    // Depth boost + slight brightness lift
+    accum = pow(accum, vec3(1.5)) * 1.25;
 
     fragColor = vec4(accum,1.0);
 }
@@ -91,7 +107,6 @@ void main(){
 
 @Component({
   selector: 'app-nebula-splash',
-  imports: [],
   templateUrl: './nebula-splash.html',
   styleUrl: './nebula-splash.scss',
 })
@@ -101,8 +116,15 @@ export class NebulaSplash implements AfterViewInit, OnDestroy {
   private program: WebGLProgram | null = null;
   private uResolutionLoc: WebGLUniformLocation | null = null;
   private uTimeLoc: WebGLUniformLocation | null = null;
+  private uMouseLoc: WebGLUniformLocation | null = null;
   private rafId = 0;
   private resizeObserver: ResizeObserver | null = null;
+  private mouse = { x: 0.5, y: 0.5 };
+  private targetMouse = { x: 0.5, y: 0.5 };
+  private readonly mouseLerp = 0.07;
+  /** Render at this scale of container size (1 = full res, 0.5 = half = 4x fewer pixels) */
+  private readonly renderScale = 0.5;
+  private boundMouseMove: ((e: MouseEvent) => void) | null = null;
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef?.nativeElement;
@@ -144,14 +166,28 @@ export class NebulaSplash implements AfterViewInit, OnDestroy {
     this.program = program;
     this.uResolutionLoc = gl.getUniformLocation(program, 'iResolution');
     this.uTimeLoc = gl.getUniformLocation(program, 'iTime');
+    this.uMouseLoc = gl.getUniformLocation(program, 'iMouse');
+
+    // Global mouse: use window so position is tracked even when pointer is over elements on top.
+    // Do not recenter on leave — keeps last position so return from off-screen is smooth.
+    this.boundMouseMove = (e: MouseEvent): void => {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width || 1;
+      const h = rect.height || 1;
+      this.targetMouse.x = Math.max(0.0, Math.min(1.0, (e.clientX - rect.left) / w));
+      this.targetMouse.y = Math.max(0.0, Math.min(1.0, 1.0 - (e.clientY - rect.top) / h));
+    };
+    window.addEventListener('mousemove', this.boundMouseMove, { passive: true });
 
     const resize = (): void => {
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
-        gl.viewport(0, 0, w, h);
+      const rw = Math.max(1, Math.floor(w * this.renderScale));
+      const rh = Math.max(1, Math.floor(h * this.renderScale));
+      if (canvas.width !== rw || canvas.height !== rh) {
+        canvas.width = rw;
+        canvas.height = rh;
+        gl.viewport(0, 0, rw, rh);
       }
     };
     resize();
@@ -160,10 +196,13 @@ export class NebulaSplash implements AfterViewInit, OnDestroy {
 
     const tick = (): void => {
       if (!this.gl || !this.program) return;
+      this.mouse.x += (this.targetMouse.x - this.mouse.x) * this.mouseLerp;
+      this.mouse.y += (this.targetMouse.y - this.mouse.y) * this.mouseLerp;
       const g = this.gl;
       g.useProgram(this.program);
       if (this.uResolutionLoc) g.uniform2f(this.uResolutionLoc, g.canvas.width, g.canvas.height);
       if (this.uTimeLoc) g.uniform1f(this.uTimeLoc, performance.now() / 1000);
+      if (this.uMouseLoc) g.uniform2f(this.uMouseLoc, this.mouse.x, this.mouse.y);
       g.drawArrays(g.TRIANGLE_STRIP, 0, 4);
       this.rafId = requestAnimationFrame(tick);
     };
@@ -186,6 +225,7 @@ export class NebulaSplash implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.resizeObserver?.disconnect();
+    if (this.boundMouseMove) window.removeEventListener('mousemove', this.boundMouseMove);
     if (this.gl && this.program) {
       this.gl.deleteProgram(this.program);
     }

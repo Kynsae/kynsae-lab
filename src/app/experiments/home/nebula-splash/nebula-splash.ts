@@ -16,8 +16,8 @@ uniform vec2 iMouse;
 
 out vec4 fragColor;
 
-const int ITERATIONS = 90;
-const float BASE_STEP = 0.018;
+const int ITERATIONS = 100;
+const float BASE_STEP = 0.01;
 const float STEP_GAIN = 0.1;
 
 // Fixed rotation (0.25 rad) - precomputed to avoid sin/cos per iteration
@@ -26,7 +26,7 @@ const mat2 ROT25 = mat2(0.9689, -0.2474, 0.2474, 0.9689);
 // Dark-mode filament palette (slightly brighter)
 vec3 palette(float t){
   vec3 a = vec3(0.05,0.05,0.08);
-  vec3 b = vec3(0.38,0.28,0.7);
+  vec3 b = vec3(0.48,0.38,0.9);
   vec3 c = vec3(1.0);
   vec3 d = vec3(0.0,0.15,0.35);
   return a + b * cos(6.28318 * (c*t + d));
@@ -38,7 +38,7 @@ vec2 twistFlow(vec2 pos, float z, float time, vec2 mouse){
     float c = cos(angle);
     float s = sin(angle);
     float depth = z - time;
-    float scale = 0.15 + 0.12 * depth;
+    float scale = 0.5 + 0.12 * depth;
     vec2 mousePull = (mouse - 0.5) * scale;
     pos += 0.2 * vec2(sin(z*1.5 + pos.y*2.0), cos(z*1.3 + pos.x*2.5)) + mousePull * vec2(c, s);
     return mat2(c, -s, s, c) * pos;
@@ -47,10 +47,10 @@ vec2 twistFlow(vec2 pos, float z, float time, vec2 mouse){
 // Turbulence: curl + uniform mouse swirl (same direction at all depths so all filaments react)
 vec2 turbulence(vec2 pos, float z, float time, vec2 mouse){
     vec2 m = (mouse - 0.5);
-    float swirl = 0.28 * (0.7 + 0.3 * sin(z * 0.6));
-    vec2 vortex = vec2(-m.y, m.x) * swirl;
+    float swirl = 0.28 * (0.1 + 0.3 * sin(z * 0.1));
+    vec2 vortex = vec2(-m.y, m.x) * swirl * 0.1;
 
-    float n = sin(pos.x*2.3 + z*0.4) * cos(pos.y*2.7 - z*0.5) + time*0.2;
+    float n = sin(pos.x*2.3 + z*0.1) * cos(pos.y*2.7 - z*0.5) + time*0.2;
     vec2 curl = vec2(cos(pos.y*3.2 + n), sin(pos.x*3.5 - n)) * 0.12;
     return curl + vortex;
 }
@@ -59,10 +59,10 @@ void main(){
     vec2 uv = (gl_FragCoord.xy - 0.5*iResolution) / iResolution.y;
 
     // Mouse parallax: subtle offset so nebula follows cursor (iMouse in 0..1, center 0.5)
-    vec2 mouseOffset = (iMouse - 0.5) * 0.15;
+    vec2 mouseOffset = (iMouse - 0.5) * 0.13;
     uv -= mouseOffset;
 
-    float time = iTime * 0.3;
+    float time = iTime * 0.25;
     vec3 accum = vec3(0.0);
     float stepSize = 0.0;
     float dist = 0.0;
@@ -89,17 +89,14 @@ void main(){
         float field = cos(r*15.0 - p.z*4.0) + cos(p.x*7.0 + p.y*6.0 + p.z*2.5);
 
         // Sharpen filaments
-        float filament = pow(1.0 / (1.0 + abs(field)*5.0), 2.0);
+        float filament = pow(1.0 / (1.1 + abs(field)*5.0), 2.0);
 
         // Continuous accumulation
-        vec3 col = palette(r*0.25 + p.z*0.05 + fi*0.01);
-        accum += col * filament * 0.05;
+        vec3 col = palette(r*0.5 + fi*0.01);
+        accum += col * filament * 0.04;
 
         stepSize += field * 0.1;
     }
-
-    // Depth boost + slight brightness lift
-    accum = pow(accum, vec3(1.5)) * 1.25;
 
     fragColor = vec4(accum,1.0);
 }

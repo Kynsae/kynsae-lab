@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { NebulaSplash } from './nebula-splash/nebula-splash';
 
 @Component({
@@ -10,5 +10,4 @@ import { NebulaSplash } from './nebula-splash/nebula-splash';
   styleUrl: './home.scss',
 })
 export class Home {
-
 }

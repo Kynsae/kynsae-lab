@@ -1,59 +1,53 @@
-# KynsaeLab
+![THE LAB](public/banner.webp)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+<div align="center">
+  <h1>
+    <a href="https://app.kynsae.com">Kynsae - LAB</a>
+  </h1>
+</div>
 
-## Development server
+Collection of creative experiments and interactive demos — WebGL, Three.js, 3D point clouds, and generative visuals.
 
-To start a local development server, run:
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [Trademarks](#trademarks)
+- [License](#license)
 
+## Project Structure
+
+- **`public/`** — Static assets (images, fonts, icons, experiment previews).
+- **`src/app/core/`** — Shared data and services.
+- **`src/app/experiments/`** — One component per experiment.
+- **`src/app/shared/`** — Reusable components, layout (navbar, panel), and models.
+
+## Getting Started
+
+**Prerequisites:**
+- Node.js
+- Angular CLI
+
+**Install dependencies:**
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+**Run the dev server:**
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+**Build for production:**
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+## Contributing
+Contributions are welcome. Please open an issue to discuss proposals or bugs, and submit a pull request for changes. Keep PRs focused, include a clear description of the change and why it is needed, and run tests when applicable.
 
-To build the project run:
+## Trademarks
+IRIS, Antidote, and related logos are trademarks. The AGPL-3.0 license does not grant permission to use the trademarks for branding or marketing. See `TRADEMARKS.md` for details.
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## License
+This project is licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0). You may use, modify, and distribute the code under the terms of that license; derivative works and network use must be disclosed and licensed under the same terms. See [LICENSE](LICENSE) in the repository root for the full text.

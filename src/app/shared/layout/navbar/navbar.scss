@@ -2,7 +2,7 @@
     position: fixed;
     top: 0;
     left: 250px;
-    height: 80px;
+    height: 75px;
     width: calc(100% - 250px);
     padding: calc(var(--padding-small) * 2);
     box-sizing: border-box;
@@ -16,4 +16,5 @@
 
 img {
     height: 100%;
+    cursor: pointer;
 }

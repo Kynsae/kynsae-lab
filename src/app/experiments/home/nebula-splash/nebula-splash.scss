@@ -4,9 +4,10 @@
 }
 
 .nebula-splash {
-  position: absolute;
+  position: fixed;
   inset: 0;
   overflow: hidden;
+  z-index: -2;
 
   .nebula-canvas {
     display: block;

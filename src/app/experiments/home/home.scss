@@ -20,6 +20,7 @@ app-rotating-mirrors {
     display: flex;
     flex-direction: column;
     justify-content: end;
+    align-items: end;
     gap: 40px;
     padding: 90px;
     box-sizing: border-box;
@@ -38,4 +39,18 @@ app-rotating-mirrors {
     max-width: 400px;
     width: 100%;
     text-align: justify;
+
+    .section-title {
+        color: rgba(255, 255, 255, 0.385);
+    }
+}
+
+.link {
+    display: flex;
+    justify-content: space-between;
+}
+
+a {
+    text-decoration: underline;
+    cursor: pointer;
 }

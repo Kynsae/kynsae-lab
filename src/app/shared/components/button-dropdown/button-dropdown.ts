@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -12,6 +13,7 @@ import {
   selector: 'app-button-dropdown',
   templateUrl: './button-dropdown.html',
   styleUrl: './button-dropdown.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonDropdown {
   // INPUTS

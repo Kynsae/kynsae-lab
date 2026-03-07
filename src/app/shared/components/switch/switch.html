@@ -1,9 +1,9 @@
 <div class="container">
-    <div (click)="value.set(true)" [class.switch-active]="value()" class="switch">
+    <app-button [fullWidth]="true" (click)="value.set(true)" [active]="value()">
         TRUE
-    </div>
+    </app-button>
 
-    <div (click)="value.set(false)" [class.switch-active]="!value()" class="switch">
+    <app-button [fullWidth]="true" (click)="value.set(false)" [active]="!value()">
         FALSE
-    </div>
+    </app-button>
 </div>

@@ -1,4 +1,4 @@
-<div class="container">
-    <img [src]="image()"> 
+<div [class.active]="active()" class="container">
+    <img [src]="image()">
     <ng-content></ng-content>
 </div>

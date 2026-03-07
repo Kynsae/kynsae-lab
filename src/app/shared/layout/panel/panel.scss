@@ -7,6 +7,16 @@
     box-sizing: border-box;
 }
 
+.blur {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(20px);
+    z-index: -1;
+}
+
 .panel-left {
     display: flex;
     flex-direction: column;

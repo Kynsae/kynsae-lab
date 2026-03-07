@@ -1,7 +1,7 @@
 <div class="container">
     <div [class.button-active]="dropdownOpen()" (click)="toggleDropdown()" class="button">
         @if(text()) {
-            <p>{{ text() }}</p>
+            <p class="label">{{ text() }}</p>
         }
     
         <img class="icon" [class.icon-rotate]="dropdownOpen() && multiSelect()" [src]="icon()">

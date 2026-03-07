@@ -2,8 +2,9 @@
     <div
         class="preview"
         [style.background-color]="value()"
-        (click)="togglePicker(); $event.stopPropagation()"
+        (click)="togglePicker()"
     ></div>
+
     <input
         #hexInput
         class="hex-input"
@@ -12,6 +13,7 @@
         (input)="onHexInput($event)"
         (focus)="onHexFocus($event)"
         (blur)="onHexBlur($event)"
+        maxlength="10"
     >
 </div>
 

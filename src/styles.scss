@@ -58,39 +58,39 @@ Global styles
 */
 
 body {
-    font-family: 'JetBrains-Regular', 'arial';
-    background-color: black;
-    color: white;
+  font-family: 'JetBrains-Regular', 'arial';
+  background-color: black;
+  color: white;
+  user-select: none;
+  -webkit-user-drag: none;
+  margin: 0;
+  overflow-x: hidden !important;
+  touch-action: manipulation;
+  overflow: hidden;
+  height: 100vh;
+  font-size: 13px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
     user-select: none;
     -webkit-user-drag: none;
-    margin: 0;
-    overflow-x: hidden !important;
-    touch-action: manipulation;
-    overflow: hidden;
-    height: 100vh;
-    font-size: 13px;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-
-    img {
-        user-select: none;
-        -webkit-user-drag: none;
-    }
+  }
 }
 
 body,
 html {
-    overscroll-behavior: none;
+  overscroll-behavior: none;
 }
 
 p {
-    margin: 0;
+  margin: 0;
 }
 
 a {
-    all: unset;
+  all: unset;
 }
 
 /*
@@ -101,19 +101,19 @@ CSS Custom Properties
 
 // COLORS
 :root {
-    --background100: #0E0E0E;
-    --background200: #191919;
-    --background300: #222222;
-    --background400: #3e3e3e;
+  --background100: #ffffff0f;
+  --background200: #ffffff13;
+  --background300: #ffffff20;
+  --background400: #3e3e3e;
 
-    --grey100: #757575;
-    --active: #00ff6e;
+  --grey100: #757575;
+  --active: #5900ff;
 }
 
 // OTHER
 :root {
-    --padding-small: 11px;
-    --padding-medium: 20px;
+  --padding-small: 11px;
+  --padding-medium: 20px;
 }
 
 /*

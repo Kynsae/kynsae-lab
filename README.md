@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1>
-    <a href="https://app.kynsae.com">Kynsae - LAB</a>
+    <a href="https://lab.kynsae.com">Kynsae - LAB</a>
   </h1>
 </div>
 

@@ -1,4 +1,4 @@
-![THE LAB](public/banner.webp)
+![THE LAB](public/github-banner.webp)
 
 <div align="center">
   <h1>
